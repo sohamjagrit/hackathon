@@ -1,0 +1,163 @@
+Skip Navigation
+Sabre
+
+No results found
+Search APIs, Documentation, Developer Guides
+
+SJ
+DeepLearning.AI Voice AI Hackathon
+v1
+Product Collection
+
+Menu
+Collapse
+Explore collection
+About
+Examples
+
+authentication-skills.md
+air-skills.md
+hotel-skills.md
+MCP Supported Use Cases
+mcp-tool-skill.md
+mcp-skills-skill.md
+MCP Sample Chatbot Tutorial
+Help
+
+MCP Server Setup
+MCP Tool API Reference
+Postman Collections
+Discord channel
+Sabre MCP Server Coding Tutorial: Sample Chatbot
+Build a Python AI travel agent that connects to the Sabre MCP Server using the Google Agent Development Kit (ADK). For framework details, see the Google ADK documentation.
+
+Pilot Status: This is an early access pilot.
+
+Prerequisites | Project Setup | Build the Agent | Run the App
+
+Prerequisites
+Requirement	Details
+Python 3.10+
+
+Installed and available in your PATH.
+
+Google Cloud Project
+
+Vertex AI API enabled.
+
+Sabre CERT Credentials
+
+EPR/PCC provisioned for the MCP Server. View the Setup Guide.
+
+Project structure & setup
+Create a new directory for your project, organized as a Python package.
+
+1. Install dependencies
+Install the Google Agent Development Kit using pip:
+
+
+1pip install google-adk
+2. Initialize the package
+Create a file named init.py in your project root.
+
+
+1# __init__.py
+2from . import agent
+In the Python language specification, the init.py file is required to treat the directory as a package. This allows the ADK runtime to correctly import and execute your agent code.
+System configuration
+Set Sabre credentials as environment variables to keep them secure and accessible to the Python runtime.
+
+1. Export Sabre credentials
+For macOS and Linux users (using ZSH or Bash), add the following exports to your shell configuration file (e.g., ~/.zshrc or ~/.bash_profile).
+
+
+1# Sabre API Credentials (CERT Environment)
+2export SABRE_API_USERID='XXXXXX'
+3export SABRE_API_GROUP='YYYY'
+4export SABRE_API_DOMAIN='ZZ'
+5export SABRE_API_PASSWORD='WWWWWWW'
+Once you have saved the file, apply the changes to your current terminal session:
+
+
+1source ~/.zshrc
+2. Google Cloud configuration
+Create a .env file in your project root for project-specific settings that do not contain sensitive passwords:
+
+
+# Google Cloud Vertex AI Configuration
+GOOGLE_CLOUD_PROJECT="your-google-project-id"
+GOOGLE_CLOUD_LOCATION="us-central1"
+GOOGLE_GENAI_USE_VERTEXAI="True"
+Building the agent
+Create agent.py with three parts: authentication, helper tools, and the agent definition.
+
+Part 1: Sabre authentication
+This helper function retrieves a Bearer Token from Sabre’s REST API using your credentials.
+
+Part 2: Local helper tools
+These functions give the agent access to the current date and time.
+
+
+1def get_current_date() -> str:
+2    """Returns the current date in a formatted string."""
+3    return datetime.now().strftime("%Y-%m-%d")
+4
+5def get_current_time() -> str:
+6    """Returns the current time in a formatted string."""
+7    return datetime.now().strftime("%H:%M:%S")
+Part 3: Defining the agent
+Instantiate the LlmAgent with the MCPToolset. The agent automatically discovers available Sabre tools via the MCP protocol.
+
+Running the application
+The Google ADK includes a built-in development server and web UI.
+
+Open your terminal to the project root.
+
+Run the following command:
+
+
+1adk web
+Open your web browser and navigate to the local development UI: http://127.0.0.1:8000/dev-ui/?app=mcp-test-01
+
+Usage examples
+Once the UI is loaded, you can interact with the Sabre MCP Agent. Try these prompts to test the capabilities:
+
+Discovery
+
+"Tell me what capabilities you have. Especially tools from an MCP server."
+
+Itinerary Management
+
+"Get the booking information for PNR XXXXXX. Display an overview of the itinerary."
+
+"Describe this trip for me. What can I know about it from a traveler’s perspective?"
+
+"How many days until the trip departs?"
+
+Shopping & Modifications
+
+"Search for a return flight from that destination back home to SCL. Use the day after the trip’s end."
+
+"Good. Now book option 3."
+
+"Can I get a hotel at the destination? Check in is the day of arrival. Staying for 3 nights."
+
+Cancellations
+
+"Wait a minute. I can’t make that trip. Please cancel trip with ID XXXXXX."
+
+Discord graphic
+💬 Join our Discord channel at discord.com/invite/Taqjf6pJ4k to keep up to date with everything around the hackathon.
+
+Missing information on this page? Let Us know
+Go to the top
+© 2015-2026 Sabre GLBL Inc.
+Privacy Policy
+Support
+Cookies
+
+
+
+DeepLearning.AI Voice AI Hackathon | Developer Hub
+
+Feedback

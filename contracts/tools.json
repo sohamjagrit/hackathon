@@ -1,0 +1,157 @@
+[
+  {
+    "name": "get_itinerary",
+    "description": "Retrieve the current booking itinerary and status for the active session. Call this first in Act 2 to know what was booked and what is now broken.",
+    "url": "https://REPLACE_WITH_TUNNEL/tools/get_itinerary",
+    "method": "POST",
+    "timeout_seconds": 15,
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "session_id": {
+          "type": "string",
+          "description": "The session/PNR session to retrieve. If unknown, pass 'active'."
+        }
+      },
+      "required": ["session_id"]
+    },
+    "owner": "vb_direct",
+    "in_eval_surface": false,
+    "notes": "Read-only. VB agent calls this directly — no LangGraph round-trip needed."
+  },
+  {
+    "name": "propose_recovery",
+    "description": "Ask the brain to assess the disruption and return a proposed recovery plan (new flight options, updated hotel/car windows). Must be called before any leg approval.",
+    "url": "https://REPLACE_WITH_TUNNEL/agent/query",
+    "method": "POST",
+    "timeout_seconds": 60,
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "session_id": { "type": "string" },
+        "query": { "type": "string", "description": "Pass verbatim: 'propose_recovery'" }
+      },
+      "required": ["session_id", "query"]
+    },
+    "owner": "langgraph",
+    "in_eval_surface": true
+  },
+  {
+    "name": "search_flights",
+    "description": "Search for available replacement flights given the disrupted leg. Returns options the agent will present to the traveler.",
+    "url": "https://REPLACE_WITH_TUNNEL/agent/query",
+    "method": "POST",
+    "timeout_seconds": 90,
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "session_id": { "type": "string" },
+        "query": { "type": "string", "description": "Pass verbatim: 'search_replacement_flights'" }
+      },
+      "required": ["session_id", "query"]
+    },
+    "owner": "langgraph",
+    "in_eval_surface": true
+  },
+  {
+    "name": "record_choice",
+    "description": "Record the traveler's selection for a leg (flight, hotel, or car). Must be called after the traveler says yes to a specific option.",
+    "url": "https://REPLACE_WITH_TUNNEL/agent/query",
+    "method": "POST",
+    "timeout_seconds": 30,
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "session_id": { "type": "string" },
+        "query": { "type": "string", "description": "The traveler's exact approval utterance (e.g. '6:05' or 'go ahead')." }
+      },
+      "required": ["session_id", "query"]
+    },
+    "owner": "langgraph",
+    "in_eval_surface": true
+  },
+  {
+    "name": "search_hotels",
+    "description": "Search for available hotels on the new dates after the flight is rebooked.",
+    "url": "https://REPLACE_WITH_TUNNEL/agent/query",
+    "method": "POST",
+    "timeout_seconds": 90,
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "session_id": { "type": "string" },
+        "query": { "type": "string", "description": "Pass verbatim: 'search_replacement_hotels'" }
+      },
+      "required": ["session_id", "query"]
+    },
+    "owner": "langgraph",
+    "in_eval_surface": true
+  },
+  {
+    "name": "search_cars",
+    "description": "Search for available car rentals on the new dates.",
+    "url": "https://REPLACE_WITH_TUNNEL/agent/query",
+    "method": "POST",
+    "timeout_seconds": 90,
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "session_id": { "type": "string" },
+        "query": { "type": "string", "description": "Pass verbatim: 'search_replacement_cars'" }
+      },
+      "required": ["session_id", "query"]
+    },
+    "owner": "langgraph",
+    "in_eval_surface": true
+  },
+  {
+    "name": "call_hotel",
+    "description": "Place a nested outbound call to the hotel to modify the reservation. Only call this AFTER the traveler has explicitly approved the hotel change AND you have told them you are putting them on hold.",
+    "url": "https://REPLACE_WITH_TUNNEL/agent/query",
+    "method": "POST",
+    "timeout_seconds": 300,
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "session_id": { "type": "string" },
+        "query": { "type": "string", "description": "Pass verbatim: 'call_hotel'" }
+      },
+      "required": ["session_id", "query"]
+    },
+    "owner": "langgraph",
+    "in_eval_surface": true,
+    "notes": "300s window covers the nested VB call. Traveler must be on hold before calling."
+  },
+  {
+    "name": "commit_itinerary",
+    "description": "Write the final rebooked itinerary to Sabre and emit the confirmation. Only call after all three leg approvals are recorded.",
+    "url": "https://REPLACE_WITH_TUNNEL/agent/query",
+    "method": "POST",
+    "timeout_seconds": 120,
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "session_id": { "type": "string" },
+        "query": { "type": "string", "description": "Pass verbatim: 'commit_itinerary'" }
+      },
+      "required": ["session_id", "query"]
+    },
+    "owner": "langgraph",
+    "in_eval_surface": true
+  },
+  {
+    "name": "get_booking_context",
+    "description": "Hotel agent only: retrieve the booking context to know which reservation to modify. Call this first.",
+    "url": "https://REPLACE_WITH_TUNNEL/context/hotel_call",
+    "method": "GET",
+    "timeout_seconds": 15,
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "owner": "vb_direct",
+    "in_eval_surface": false,
+    "notes": "Keyed by callee phone number on the server. Hotel agent pulls context rather than receiving it at call start."
+  }
+]

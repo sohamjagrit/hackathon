@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  @keyframes pulse { 0%{ box-shadow:0 0 0 0 rgba(58,110,94,.35);} 70%{ box-shadow:0 0 0 14px rgba(58,110,94,0);} 100%{ box-shadow:0 0 0 0 rgba(58,110,94,0);} }
+  @keyframes fadeUp { from{ opacity:0; transform:translateY(6px);} to{ opacity:1; transform:translateY(0);} }
+  @keyframes bar1 { 0%,100%{ height:6px; } 50%{ height:20px; } }
+  @keyframes bar2 { 0%,100%{ height:16px; } 50%{ height:6px; } }
+  @keyframes bar3 { 0%,100%{ height:10px; } 50%{ height:22px; } }
+  @keyframes dotBounce { 0%,80%,100%{ transform:translateY(0); opacity:.4 } 40%{ transform:translateY(-4px); opacity:1 } }
+  @keyframes captionIn { from{ opacity:0; transform:translateY(4px); } to{ opacity:1; transform:translateY(0); } }
+  @keyframes spin { to{ transform:rotate(360deg); } }
+  body{ margin:0; font-family:'Instrument Sans',sans-serif; background:oklch(0.97 0.012 75); }
+  a{ color:oklch(0.45 0.09 165); }
+  a:hover{ color:oklch(0.38 0.09 165); }
+  ::-webkit-scrollbar{ width:8px; height:8px; }
+  ::-webkit-scrollbar-thumb{ background:oklch(0.85 0.01 75); border-radius:8px; }
+</style>
+</helmet>
+
+<div style="width:100%;height:100vh;min-height:640px;display:flex;background:oklch(0.97 0.012 75);color:oklch(0.22 0.01 75);overflow:hidden;position:relative" data-screen-label="Travel Planner">
+
+  <!-- LEFT RAIL -->
+  <div style="width:320px;flex:none;display:flex;flex-direction:column;background:oklch(0.985 0.006 75);border-right:1px solid oklch(0.9 0.01 75)">
+    <div style="padding:22px 22px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid oklch(0.92 0.01 75)">
+      <div style="width:34px;height:34px;border-radius:9px;background:oklch(0.45 0.09 165);display:flex;align-items:center;justify-content:center;flex:none">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M2 12l19-9-6 19-4-8-9-2z"/></svg>
+      </div>
+      <div style="flex:1">
+        <div style="font-size:15px;font-weight:600;line-height:1.2">Wayfare</div>
+        <div style="font-size:12px;color:oklch(0.55 0.01 75)">your trip, spoken into being</div>
+      </div>
+      <button onClick="{{ toggleMute }}" title="Mute agent voice" style="{{ muteBtnStyle }}">
+        <sc-if value="{{ muted }}" hint-placeholder-val="{{ false }}">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="oklch(0.5 0.01 75)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5z"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+        </sc-if>
+        <sc-if value="{{ notMuted }}" hint-placeholder-val="{{ true }}">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="oklch(0.5 0.01 75)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 6a9 9 0 0 1 0 12"/></svg>
+        </sc-if>
+      </button>
+    </div>
+
+    <div style="flex:1;overflow-y:auto;padding:16px 18px;display:flex;flex-direction:column;gap:12px">
+      <sc-for list="{{ messages }}" as="m" hint-placeholder-count="2">
+        <div style="display:flex;{{ m.rowStyle }}">
+          <div style="{{ m.bubbleStyle }}">
+            {{ m.text }}
+          </div>
+        </div>
+      </sc-for>
+    </div>
+
+    <div style="padding:16px 20px 22px;border-top:1px solid oklch(0.92 0.01 75);display:flex;flex-direction:column;align-items:center;gap:10px">
+      <div style="height:22px;display:flex;align-items:center;justify-content:center;gap:3px">
+        <sc-if value="{{ isListening }}" hint-placeholder-val="{{ false }}">
+          <span style="width:3px;background:oklch(0.45 0.09 165);border-radius:2px;animation:bar1 .6s infinite ease-in-out"></span>
+          <span style="width:3px;background:oklch(0.45 0.09 165);border-radius:2px;animation:bar2 .6s infinite ease-in-out"></span>
+          <span style="width:3px;background:oklch(0.45 0.09 165);border-radius:2px;animation:bar3 .6s infinite ease-in-out"></span>
+          <span style="width:3px;background:oklch(0.45 0.09 165);border-radius:2px;animation:bar1 .6s infinite ease-in-out .2s"></span>
+        </sc-if>
+        <sc-if value="{{ isThinking }}" hint-placeholder-val="{{ false }}">
+          <span style="width:5px;height:5px;border-radius:50%;background:oklch(0.7 0.13 55);animation:dotBounce 1s infinite"></span>
+          <span style="width:5px;height:5px;border-radius:50%;background:oklch(0.7 0.13 55);animation:dotBounce 1s infinite .15s"></span>
+          <span style="width:5px;height:5px;border-radius:50%;background:oklch(0.7 0.13 55);animation:dotBounce 1s infinite .3s"></span>
+        </sc-if>
+      </div>
+      <button onClick="{{ advance }}" disabled="{{ micDisabled }}" style="width:60px;height:60px;border-radius:50%;border:none;cursor:pointer;background:{{ micBg }};display:flex;align-items:center;justify-content:center;animation:{{ micAnim }};transition:background .2s">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10v1a7 7 0 0 0 14 0v-1"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
+      </button>
+      <div style="font-size:12.5px;color:oklch(0.55 0.01 75);text-align:center">{{ micLabel }}</div>
+      <sc-if value="{{ isDone }}" hint-placeholder-val="{{ false }}">
+        <button onClick="{{ reset }}" style="border:1px solid oklch(0.85 0.01 75);background:none;color:oklch(0.5 0.01 75);font-size:12px;padding:6px 12px;border-radius:20px;cursor:pointer;font-family:inherit">Start over</button>
+      </sc-if>
+    </div>
+  </div>
+
+  <!-- RIGHT CANVAS -->
+  <div style="flex:1;display:flex;flex-direction:column;min-width:0">
+
+    <!-- TOP PAGE NAV -->
+    <div style="display:flex;align-items:center;gap:6px;padding:18px 32px 0;border-bottom:1px solid oklch(0.92 0.01 75)">
+      <sc-for list="{{ pages }}" as="p" hint-placeholder-count="3">
+        <button onClick="{{ p.onClick }}" style="{{ p.style }}">{{ p.label }}</button>
+      </sc-for>
+    </div>
+
+    <!-- CAPTION / CONFIRM BAR -->
+    <div style="padding:14px 32px;border-bottom:1px solid oklch(0.92 0.01 75);background:oklch(0.985 0.006 75);min-height:26px;display:flex;align-items:center">
+      <sc-if value="{{ isConfirmMode }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;align-items:center;gap:16px;width:100%;animation:captionIn .25s ease">
+          <div style="font-size:16px;font-weight:500;flex:1">{{ captionText }}</div>
+          <button onClick="{{ confirmNo }}" style="border:1px solid oklch(0.85 0.01 75);background:none;color:oklch(0.4 0.01 75);font-family:inherit;font-size:13px;font-weight:600;padding:8px 16px;border-radius:20px;cursor:pointer">Not now</button>
+          <button onClick="{{ confirmYes }}" style="border:none;background:oklch(0.45 0.09 165);color:#fff;font-family:inherit;font-size:13px;font-weight:600;padding:8px 18px;border-radius:20px;cursor:pointer">Yes, book it</button>
+        </div>
+      </sc-if>
+      <sc-if value="{{ isSpeakingMode }}" hint-placeholder-val="{{ false }}">
+        <div style="font-size:16px;font-weight:500;animation:captionIn .25s ease;color:oklch(0.28 0.01 75)">{{ captionText }}</div>
+      </sc-if>
+      <sc-if value="{{ isWaitingMode }}" hint-placeholder-val="{{ true }}">
+        <div style="font-size:13.5px;color:oklch(0.55 0.01 75)">{{ waitingLabel }}</div>
+      </sc-if>
+    </div>
+
+    <div style="flex:1;overflow-y:auto;padding:24px 32px 32px">
+
+      <!-- HOME PAGE -->
+      <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+        <div style="animation:fadeUp .35s ease;display:flex;flex-direction:column;height:100%">
+          <div style="margin-bottom:18px">
+            <div style="font-family:'Instrument Serif',serif;font-size:30px;font-style:italic;color:oklch(0.3 0.01 75)">{{ tripTitle }}</div>
+            <div style="font-size:13px;color:oklch(0.55 0.01 75);margin-top:2px">{{ tripSubtitle }}</div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:16px;flex:1;min-height:420px">
+
+            <!-- FLIGHTS CARD -->
+            <div style="background:#fff;border:1px solid {{ flightCard.border }};border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:10px;overflow:hidden">
+              <div style="display:flex;align-items:center;gap:8px">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="oklch(0.45 0.09 165)" stroke-width="2" stroke-linecap="round"><path d="M2 12l19-9-6 19-4-8-9-2z"/></svg>
+                <div style="font-size:14px;font-weight:600;flex:1">Flights</div>
+                <sc-if value="{{ flightCard.canUndo }}" hint-placeholder-val="{{ false }}">
+                  <button onClick="{{ flightCard.onUndo }}" style="border:none;background:none;color:oklch(0.55 0.01 75);font-family:inherit;font-size:11px;text-decoration:underline;cursor:pointer;padding:0">Undo</button>
+                </sc-if>
+                <div style="{{ flightCard.badgeStyle }}">{{ flightCard.badgeLabel }}</div>
+              </div>
+              <sc-if value="{{ flightCard.isIdle }}" hint-placeholder-val="{{ true }}">
+                <div style="flex:1;display:flex;align-items:center;justify-content:center;font-size:12.5px;color:oklch(0.65 0.01 75)">Say where you're headed to search flights</div>
+              </sc-if>
+              <sc-if value="{{ flightCard.hasData }}" hint-placeholder-val="{{ false }}">
+                <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:4px">
+                  <div style="font-size:15px;font-weight:600">{{ flightCard.airline }} · {{ flightCard.time }}</div>
+                  <div style="font-size:12.5px;color:oklch(0.55 0.01 75)">{{ flightCard.duration }}</div>
+                  <div style="font-size:20px;font-weight:600;color:oklch(0.3 0.01 75);margin-top:4px">{{ flightCard.price }}</div>
+                </div>
+                <button onClick="{{ flightCard.onAction }}" style="{{ flightCard.btnStyle }}">{{ flightCard.btnLabel }}</button>
+              </sc-if>
+            </div>
+
+            <!-- HOTEL CARD -->
+            <div style="background:#fff;border:1px solid {{ hotelCard.border }};border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:10px;overflow:hidden">
+              <div style="display:flex;align-items:center;gap:8px">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="oklch(0.45 0.09 165)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V8a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v13"/><path d="M3 12h18"/><path d="M7 21v-4"/><path d="M17 21v-4"/></svg>
+                <div style="font-size:14px;font-weight:600;flex:1">Hotel</div>
+                <sc-if value="{{ hotelCard.canUndo }}" hint-placeholder-val="{{ false }}">
+                  <button onClick="{{ hotelCard.onUndo }}" style="border:none;background:none;color:oklch(0.55 0.01 75);font-family:inherit;font-size:11px;text-decoration:underline;cursor:pointer;padding:0">Undo</button>
+                </sc-if>
+                <div style="{{ hotelCard.badgeStyle }}">{{ hotelCard.badgeLabel }}</div>
+              </div>
+              <sc-if value="{{ hotelCard.isIdle }}" hint-placeholder-val="{{ true }}">
+                <div style="flex:1;display:flex;align-items:center;justify-content:center;font-size:12.5px;color:oklch(0.65 0.01 75)">Tell me your style and budget to find a stay</div>
+              </sc-if>
+              <sc-if value="{{ hotelCard.hasData }}" hint-placeholder-val="{{ false }}">
+                <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:4px">
+                  <div style="font-size:15px;font-weight:600">{{ hotelCard.name }}</div>
+                  <div style="font-size:12.5px;color:oklch(0.55 0.01 75)">{{ hotelCard.rating }} · {{ hotelCard.area }}</div>
+                  <div style="font-size:20px;font-weight:600;color:oklch(0.3 0.01 75);margin-top:4px">{{ hotelCard.price }}<span style="font-size:11px;font-weight:400;color:oklch(0.55 0.01 75)"> /night</span></div>
+                </div>
+                <button onClick="{{ hotelCard.onAction }}" style="{{ hotelCard.btnStyle }}">{{ hotelCard.btnLabel }}</button>
+              </sc-if>
+            </div>
+
+            <!-- CAR CARD -->
+            <div style="background:#fff;border:1px solid {{ carCard.border }};border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:10px;overflow:hidden">
+              <div style="display:flex;align-items:center;gap:8px">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="oklch(0.45 0.09 165)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17h14M5 17a2 2 0 1 0 0 .01M19 17a2 2 0 1 0 0 .01M5 17l1.5-5.5A2 2 0 0 1 8.4 10h7.2a2 2 0 0 1 1.9 1.5L19 17"/></svg>
+                <div style="font-size:14px;font-weight:600;flex:1">Car rental</div>
+                <sc-if value="{{ carCard.canUndo }}" hint-placeholder-val="{{ false }}">
+                  <button onClick="{{ carCard.onUndo }}" style="border:none;background:none;color:oklch(0.55 0.01 75);font-family:inherit;font-size:11px;text-decoration:underline;cursor:pointer;padding:0">Undo</button>
+                </sc-if>
+                <div style="{{ carCard.badgeStyle }}">{{ carCard.badgeLabel }}</div>
+              </div>
+              <sc-if value="{{ carCard.isIdle }}" hint-placeholder-val="{{ true }}">
+                <div style="flex:1;display:flex;align-items:center;justify-content:center;font-size:12.5px;color:oklch(0.65 0.01 75)">Ask for a rental if you need one</div>
+              </sc-if>
+              <sc-if value="{{ carCard.hasData }}" hint-placeholder-val="{{ false }}">
+                <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:4px">
+                  <div style="font-size:15px;font-weight:600">{{ carCard.type }}</div>
+                  <div style="font-size:12.5px;color:oklch(0.55 0.01 75)">{{ carCard.company }} · {{ carCard.dates }}</div>
+                  <div style="font-size:20px;font-weight:600;color:oklch(0.3 0.01 75);margin-top:4px">{{ carCard.price }}<span style="font-size:11px;font-weight:400;color:oklch(0.55 0.01 75)"> /day</span></div>
+                </div>
+                <button onClick="{{ carCard.onAction }}" style="{{ carCard.btnStyle }}">{{ carCard.btnLabel }}</button>
+              </sc-if>
+            </div>
+
+            <!-- THINGS TO DO CARD -->
+            <div style="background:#fff;border:1px solid {{ thingsCard.border }};border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:10px;overflow:hidden">
+              <div style="display:flex;align-items:center;gap:8px">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="oklch(0.45 0.09 165)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polygon points="12 7 14 12 9 14 12 7"/></svg>
+                <div style="font-size:14px;font-weight:600;flex:1">Things to do</div>
+                <sc-if value="{{ thingsCard.canUndo }}" hint-placeholder-val="{{ false }}">
+                  <button onClick="{{ thingsCard.onUndo }}" style="border:none;background:none;color:oklch(0.55 0.01 75);font-family:inherit;font-size:11px;text-decoration:underline;cursor:pointer;padding:0">Undo</button>
+                </sc-if>
+                <div style="{{ thingsCard.badgeStyle }}">{{ thingsCard.badgeLabel }}</div>
+              </div>
+              <sc-if value="{{ thingsCard.isIdle }}" hint-placeholder-val="{{ true }}">
+                <div style="flex:1;display:flex;align-items:center;justify-content:center;font-size:12.5px;color:oklch(0.65 0.01 75)">Ask what's worth doing, and I'll suggest some plans</div>
+              </sc-if>
+              <sc-if value="{{ thingsCard.hasData }}" hint-placeholder-val="{{ false }}">
+                <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:8px">
+                  <div style="display:flex;flex-wrap:wrap;gap:6px">
+                    <sc-for list="{{ thingsCard.chips }}" as="c" hint-placeholder-count="2">
+                      <div style="background:oklch(0.95 0.012 75);border-radius:20px;padding:5px 12px;font-size:12px;font-weight:500">{{ c }}</div>
+                    </sc-for>
+                  </div>
+                  <div style="font-size:12.5px;color:oklch(0.55 0.01 75);display:flex;align-items:center;gap:6px">☀ {{ thingsCard.weather }}</div>
+                </div>
+              </sc-if>
+            </div>
+          </div>
+
+          <sc-if value="{{ showReviewCta }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-top:16px;background:oklch(0.45 0.09 165);border-radius:14px;padding:16px 22px;display:flex;align-items:center;justify-content:space-between">
+              <div style="color:#fff;font-size:14px;font-weight:500">All set — flights, hotel, car and plans are ready.</div>
+              <button onClick="{{ goItinerary }}" style="border:none;background:#fff;color:oklch(0.45 0.09 165);font-family:inherit;font-size:13px;font-weight:600;padding:9px 18px;border-radius:20px;cursor:pointer">Review itinerary →</button>
+            </div>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <!-- ITINERARY PAGE -->
+      <sc-if value="{{ isItinerary }}" hint-placeholder-val="{{ false }}">
+        <div style="animation:fadeUp .35s ease">
+          <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:18px">
+            <div>
+              <div style="font-family:'Instrument Serif',serif;font-size:30px;font-style:italic;color:oklch(0.3 0.01 75)">Lisbon &amp; Porto</div>
+              <div style="font-size:13px;color:oklch(0.55 0.01 75);margin-top:2px">5 days · Sept 12–17 · 2 travelers</div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:20px">
+            <sc-for list="{{ itineraryDays }}" as="d" hint-placeholder-count="4">
+              <div style="display:flex;gap:16px;background:#fff;border:1px solid oklch(0.91 0.01 75);border-radius:14px;padding:16px 18px">
+                <div style="flex:none;width:56px;text-align:center">
+                  <div style="font-size:11px;color:oklch(0.55 0.01 75);text-transform:uppercase;letter-spacing:.04em">{{ d.dow }}</div>
+                  <div style="font-size:22px;font-weight:600;color:oklch(0.45 0.09 165)">{{ d.date }}</div>
+                </div>
+                <div style="flex:none;width:1px;background:oklch(0.91 0.01 75)"></div>
+                <div style="flex:1">
+                  <div style="font-size:14px;font-weight:600;margin-bottom:4px">{{ d.city }}</div>
+                  <div style="font-size:13px;color:oklch(0.45 0.01 75);line-height:1.6">{{ d.plan }}</div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="display:flex;justify-content:flex-end">
+            <button onClick="{{ goCheckout }}" style="border:none;background:oklch(0.45 0.09 165);color:#fff;font-family:inherit;font-size:13.5px;font-weight:600;padding:11px 22px;border-radius:20px;cursor:pointer">Continue to checkout →</button>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- CHECKOUT PAGE -->
+      <sc-if value="{{ isCheckout }}" hint-placeholder-val="{{ false }}">
+        <div style="animation:fadeUp .35s ease;max-width:560px">
+          <sc-if value="{{ isPaid }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+              <div style="width:28px;height:28px;border-radius:50%;background:oklch(0.45 0.09 165);display:flex;align-items:center;justify-content:center;flex:none">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <div style="font-family:'Instrument Serif',serif;font-size:26px;font-style:italic;color:oklch(0.3 0.01 75)">Trip confirmed</div>
+            </div>
+            <div style="font-size:13px;color:oklch(0.55 0.01 75);margin-bottom:18px">Confirmation sent · itinerary and tickets emailed</div>
+          </sc-if>
+          <sc-if value="{{ isNotPaid }}" hint-placeholder-val="{{ true }}">
+            <div style="font-family:'Instrument Serif',serif;font-size:26px;font-style:italic;color:oklch(0.3 0.01 75);margin-bottom:4px">Checkout</div>
+            <div style="font-size:13px;color:oklch(0.55 0.01 75);margin-bottom:18px">Review your total before you pay</div>
+          </sc-if>
+          <div style="background:#fff;border:1px solid oklch(0.91 0.01 75);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:14px">
+            <div style="display:flex;justify-content:space-between">
+              <div style="font-size:13.5px;color:oklch(0.55 0.01 75)">Flight</div>
+              <div style="font-size:13.5px;font-weight:500">TAP · 9:05am · $412</div>
+            </div>
+            <div style="display:flex;justify-content:space-between">
+              <div style="font-size:13.5px;color:oklch(0.55 0.01 75)">Hotel</div>
+              <div style="font-size:13.5px;font-weight:500">Alfama Suites · 3 nights · $534</div>
+            </div>
+            <div style="display:flex;justify-content:space-between">
+              <div style="font-size:13.5px;color:oklch(0.55 0.01 75)">Car rental</div>
+              <div style="font-size:13.5px;font-weight:500">Compact · 2 days · $68</div>
+            </div>
+            <div style="display:flex;justify-content:space-between">
+              <div style="font-size:13.5px;color:oklch(0.55 0.01 75)">Activities</div>
+              <div style="font-size:13.5px;font-weight:500">$226</div>
+            </div>
+            <div style="height:1px;background:oklch(0.91 0.01 75)"></div>
+            <div style="display:flex;justify-content:space-between">
+              <div style="font-size:15px;font-weight:600">Total</div>
+              <div style="font-size:15px;font-weight:600">$1,240</div>
+            </div>
+          </div>
+          <sc-if value="{{ isNotPaid }}" hint-placeholder-val="{{ true }}">
+            <div style="margin-top:18px;display:flex;align-items:center;gap:8px;font-size:11.5px;color:oklch(0.6 0.03 55);background:oklch(0.96 0.03 85);border:1px solid oklch(0.85 0.05 85);border-radius:8px;padding:8px 12px">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="oklch(0.55 0.1 70)" stroke-width="2"><path d="M12 9v4M12 17h.01M10.29 3.86l-8.48 14.7A1 1 0 0 0 2.66 20h18.68a1 1 0 0 0 .85-1.44l-8.48-14.7a1 1 0 0 0-1.72 0z"/></svg>
+              Sandbox mode — test payment only, no real charge
+            </div>
+            <sc-if value="{{ isPayProcessing }}" hint-placeholder-val="{{ false }}">
+              <div style="margin-top:12px;display:flex;align-items:center;justify-content:center;gap:10px;background:oklch(0.95 0.012 75);border-radius:20px;padding:13px 0;font-size:13.5px;color:oklch(0.5 0.01 75)">
+                <span style="width:14px;height:14px;border-radius:50%;border:2px solid oklch(0.8 0.01 75);border-top-color:oklch(0.45 0.09 165);animation:spin .7s linear infinite"></span>
+                Connecting to PayPal sandbox…
+              </div>
+            </sc-if>
+            <sc-if value="{{ isPayIdle }}" hint-placeholder-val="{{ true }}">
+              <button onClick="{{ pay }}" style="margin-top:12px;border:none;background:#ffc439;color:#111;font-family:inherit;font-size:15px;font-weight:700;padding:13px 0;border-radius:24px;cursor:pointer;width:100%;display:flex;align-items:center;justify-content:center;gap:6px">
+                <span style="font-style:italic;font-weight:800;color:#003087">Pay</span><span style="font-style:italic;font-weight:800;color:#0070ba">Pal</span><span style="color:#111;font-weight:600">· Pay $1,240</span>
+              </button>
+              <button style="margin-top:8px;border:1px solid oklch(0.85 0.01 75);background:none;color:oklch(0.4 0.01 75);font-family:inherit;font-size:13px;font-weight:600;padding:11px 0;border-radius:20px;cursor:pointer;width:100%">Pay with card instead</button>
+            </sc-if>
+          </sc-if>
+          <sc-if value="{{ isPaid }}" hint-placeholder-val="{{ false }}">
+            <div style="font-size:12px;color:oklch(0.55 0.01 75);background:oklch(0.95 0.012 75);border-radius:10px;padding:10px 14px;display:flex;justify-content:space-between">
+              <span>Paid via PayPal (sandbox)</span><span>Txn {{ txnId }}</span>
+            </div>
+          </sc-if>
+        </div>
+      </sc-if>
+
+    </div>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = {
+    step: 0,
+    page: 'home',
+    flightStatus: 'idle', flightPrev: 'idle',
+    hotelStatus: 'idle', hotelPrev: 'idle',
+    carStatus: 'idle', carPrev: 'idle',
+    thingsStatus: 'idle', thingsPrev: 'idle',
+    voiceState: 'idle', // idle | listening | thinking | speaking
+    captionText: '',
+    pendingConfirm: null, // { question, onYes, onNo }
+    muted: false,
+    paid: false,
+    payStatus: 'idle',
+    txnId: '',
+  };
+
+  script = [
+    { user: '"Plan 5 days in Lisbon and Porto for me and my partner, mid-September."', agent: "On it — pulling options for flights, a stay, a car in Porto, and things to do.", set: { flightStatus: 'searching', hotelStatus: 'searching', carStatus: 'searching', thingsStatus: 'searching' } },
+    { user: '"Find me flights for those dates."', agent: 'Found 4 flights. Top pick is TAP at 9:05am for $412.', set: { flightStatus: 'found' } },
+    { user: '"Book that one."', confirm: { question: 'Book the TAP flight at 9:05am for $412?', apply: { flightStatus: 'confirmed' }, agentYes: 'Booked your TAP flight.', agentNo: "No problem — I'll leave it as an option." } },
+    { user: '"Find a boutique hotel near Alfama, under $200 a night."', agent: 'Alfama Suites looks great at $178/night.', set: { hotelStatus: 'found' } },
+    { user: '"Book Alfama Suites."', confirm: { question: 'Book Alfama Suites for $178/night?', apply: { hotelStatus: 'confirmed' }, agentYes: 'Hotel booked.', agentNo: "Okay, I won't book it yet." } },
+    { user: '"I\'ll need a rental car in Porto for two days."', agent: 'A compact from EuroWheels is $34/day.', set: { carStatus: 'found' } },
+    { user: '"Book it."', confirm: { question: 'Book the EuroWheels compact for $34/day?', apply: { carStatus: 'confirmed' }, agentYes: 'Car booked.', agentNo: "Got it, holding off on the car." } },
+    { user: '"What\'s worth doing while we\'re there?"', agent: 'Added a food tour in Lisbon and a port wine tasting in Porto — weather looks warm and dry all week.', set: { thingsStatus: 'confirmed' } },
+    { user: '"Great, show me the full itinerary."', agent: "Here's your day-by-day.", set: { page: 'itinerary' } },
+    { user: '"Everything looks right — let\'s check out."', agent: 'Great, review your total and confirm payment.', set: { page: 'checkout' } },
+  ];
+
+  itineraryDays = [
+    { dow: 'Fri', date: '12', city: 'Arrive · Lisbon', plan: 'Land on TAP 9:05am, check into Alfama Suites, evening walk through Alfama.' },
+    { dow: 'Sat', date: '13', city: 'Lisbon', plan: 'Belém tower & monastery in the morning, food tour through Baixa at 4pm.' },
+    { dow: 'Sun', date: '14', city: 'Travel to Porto', plan: 'Morning train (2h50), pick up compact rental, afternoon along the Ribeira waterfront.' },
+    { dow: 'Mon', date: '15', city: 'Porto', plan: 'Port wine cellar tour in Vila Nova de Gaia, sunset from Dom Luís bridge.' },
+    { dow: 'Tue', date: '16', city: 'Porto → depart', plan: 'Free morning, Livraria Lello, return rental car, afternoon flight home.' },
+  ];
+
+  speakTimers = [];
+  clearTimers() { this.speakTimers.forEach(t => clearTimeout(t)); this.speakTimers = []; }
+  after(ms, fn) { const t = setTimeout(fn, ms); this.speakTimers.push(t); }
+
+  speak(text, holdMs, cb) {
+    this.setState({ voiceState: 'speaking', captionText: text });
+    this.after(holdMs, () => { this.setState({ voiceState: 'idle', captionText: '' }); if (cb) cb(); });
+  }
+
+  advance = () => {
+    if (this.state.pendingConfirm || this.state.step >= this.script.length) return;
+    const s = this.script[this.state.step];
+    this.clearTimers();
+    this.setState({ voiceState: 'listening' });
+    this.after(600, () => {
+      this.setState(prev => ({ step: prev.step + 1, voiceState: 'thinking' }));
+      this.after(500, () => {
+        if (s.confirm) {
+          const c = s.confirm;
+          this.setState({
+            voiceState: 'speaking',
+            captionText: c.question,
+            pendingConfirm: {
+              onYes: () => {
+                this.clearTimers();
+                this.setStatuses(c.apply);
+                this.setState({ pendingConfirm: null });
+                this.speak(c.agentYes, 1300);
+              },
+              onNo: () => {
+                this.clearTimers();
+                this.setState({ pendingConfirm: null });
+                this.speak(c.agentNo, 1300);
+              },
+            },
+          });
+        } else {
+          this.setStatuses(s.set || {});
+          this.speak(s.agent, 1400);
+        }
+      });
+    });
+  };
+
+  setStatuses(patch) {
+    this.setState(prev => {
+      const next = { ...patch };
+      Object.keys(patch).forEach(k => {
+        if (k.endsWith('Status')) next[k.replace('Status', 'Prev')] = prev[k];
+      });
+      return next;
+    });
+  }
+
+  undo(key) {
+    this.setState(prev => ({ [key + 'Status']: prev[key + 'Prev'] ?? 'idle' }));
+  }
+
+  reset = () => {
+    this.clearTimers();
+    this.setState({
+      step: 0, page: 'home',
+      flightStatus: 'idle', flightPrev: 'idle',
+      hotelStatus: 'idle', hotelPrev: 'idle',
+      carStatus: 'idle', carPrev: 'idle',
+      thingsStatus: 'idle', thingsPrev: 'idle',
+      voiceState: 'idle', captionText: '', pendingConfirm: null, paid: false,
+    });
+  };
+
+  setPage = (page) => () => this.setState({ page });
+  pay = () => {
+    this.setState({ payStatus: 'processing' });
+    this.after(1400, () => this.setState({ payStatus: 'paid', paid: true, txnId: 'SANDBOX-' + Math.floor(100000 + Math.random() * 900000) }));
+  };
+  toggleMute = () => this.setState(prev => ({ muted: !prev.muted }));
+
+  cardVisual(status, foundLabel, confirmLabel) {
+    const map = {
+      idle: { badgeLabel: 'Waiting', badgeStyle: 'background:oklch(0.95 0.012 75);color:oklch(0.55 0.01 75);font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px' },
+      searching: { badgeLabel: 'Searching…', badgeStyle: 'background:oklch(0.93 0.03 55);color:oklch(0.5 0.1 55);font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px' },
+      found: { badgeLabel: foundLabel || 'Ready to book', badgeStyle: 'background:oklch(0.93 0.05 55);color:oklch(0.45 0.1 55);font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px' },
+      confirmed: { badgeLabel: confirmLabel || 'Booked ✓', badgeStyle: 'background:oklch(0.9 0.06 165);color:oklch(0.4 0.09 165);font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px' },
+    };
+    return map[status];
+  }
+
+  renderVals() {
+    const { step, page, flightStatus, hotelStatus, carStatus, thingsStatus, voiceState, captionText, pendingConfirm, muted, paid } = this.state;
+    const messages = [];
+    for (let i = 0; i < step; i++) {
+      const s = this.script[i];
+      messages.push({ key: i + 'u', text: s.user, rowStyle: 'justify-content:flex-end', bubbleStyle: 'background:oklch(0.45 0.09 165);color:#fff;border-radius:14px 14px 4px 14px;padding:10px 14px;font-size:13px;max-width:220px;line-height:1.45' });
+      const agentText = s.confirm ? (s.confirm.__resolved || s.confirm.question) : s.agent;
+      messages.push({ key: i + 'a', text: agentText, rowStyle: 'justify-content:flex-start', bubbleStyle: 'background:oklch(0.93 0.015 75);color:oklch(0.25 0.01 75);border-radius:14px 14px 14px 4px;padding:10px 14px;font-size:13px;max-width:220px;line-height:1.45' });
+    }
+    const isDone = step >= this.script.length && voiceState === 'idle' && !pendingConfirm;
+
+    const pageDefs = [['home', 'Home'], ['itinerary', 'Itinerary'], ['checkout', 'Checkout']];
+    const pages = pageDefs.map(([key, label]) => ({
+      key, label,
+      onClick: this.setPage(key),
+      style: `border:none;background:${page === key ? '#fff' : 'transparent'};color:${page === key ? 'oklch(0.3 0.01 75)' : 'oklch(0.55 0.01 75)'};font-family:inherit;font-size:13px;font-weight:${page === key ? '600' : '500'};padding:9px 16px;border-radius:10px 10px 0 0;cursor:pointer;box-shadow:${page === key ? '0 -1px 0 0 oklch(0.91 0.01 75) inset' : 'none'}`,
+    }));
+
+    const makeCard = (status, statusKey, extra) => ({
+      border: status === 'confirmed' ? 'oklch(0.45 0.09 165)' : 'oklch(0.91 0.01 75)',
+      isIdle: status === 'idle' || status === 'searching',
+      hasData: status === 'found' || status === 'confirmed',
+      canUndo: (status === 'found' || status === 'confirmed') && this.state[statusKey + 'Prev'] !== undefined,
+      onUndo: () => this.undo(statusKey),
+      ...extra,
+    });
+
+    const flightCard = makeCard(flightStatus, 'flight', {
+      airline: 'TAP Air Portugal', time: '9:05am', duration: 'Nonstop · 6h20', price: '$412',
+      onAction: () => this.setStatuses({ flightStatus: 'confirmed' }),
+      btnLabel: flightStatus === 'confirmed' ? 'Booked ✓' : 'Book flight',
+      btnStyle: `border:none;padding:9px 0;border-radius:20px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;background:${flightStatus === 'confirmed' ? 'oklch(0.45 0.09 165)' : 'oklch(0.93 0.015 75)'};color:${flightStatus === 'confirmed' ? '#fff' : 'oklch(0.3 0.01 75)'}`,
+      ...this.cardVisual(flightStatus),
+    });
+
+    const hotelCard = makeCard(hotelStatus, 'hotel', {
+      name: 'Alfama Suites', rating: '4.8 ★ (312)', area: 'Alfama', price: '$178',
+      onAction: () => this.setStatuses({ hotelStatus: 'confirmed' }),
+      btnLabel: hotelStatus === 'confirmed' ? 'Booked ✓' : 'Book hotel',
+      btnStyle: `border:none;padding:9px 0;border-radius:20px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;background:${hotelStatus === 'confirmed' ? 'oklch(0.45 0.09 165)' : 'oklch(0.93 0.015 75)'};color:${hotelStatus === 'confirmed' ? '#fff' : 'oklch(0.3 0.01 75)'}`,
+      ...this.cardVisual(hotelStatus),
+    });
+
+    const carCard = makeCard(carStatus, 'car', {
+      type: 'Compact', company: 'EuroWheels', dates: 'Sept 14–16', price: '$34',
+      onAction: () => this.setStatuses({ carStatus: 'confirmed' }),
+      btnLabel: carStatus === 'confirmed' ? 'Booked ✓' : 'Book car',
+      btnStyle: `border:none;padding:9px 0;border-radius:20px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;background:${carStatus === 'confirmed' ? 'oklch(0.45 0.09 165)' : 'oklch(0.93 0.015 75)'};color:${carStatus === 'confirmed' ? '#fff' : 'oklch(0.3 0.01 75)'}`,
+      ...this.cardVisual(carStatus),
+    });
+
+    const thingsCard = makeCard(thingsStatus, 'things', {
+      chips: ['Food tour · Lisbon', 'Port wine tasting · Porto'],
+      weather: '72°F, warm & dry all week',
+      ...this.cardVisual(thingsStatus, 'Ready', 'Added ✓'),
+    });
+
+    const readyCount = [flightStatus, hotelStatus, carStatus].filter(s => s === 'confirmed').length + (thingsStatus === 'confirmed' ? 1 : 0);
+
+    const isConfirmMode = !!pendingConfirm;
+    const isSpeakingMode = !isConfirmMode && voiceState === 'speaking' && !muted;
+    const isWaitingMode = !isConfirmMode && (voiceState !== 'speaking' || muted);
+    let waitingLabel = 'Tap the mic to talk to your trip';
+    if (voiceState === 'listening') waitingLabel = 'Listening…';
+    else if (voiceState === 'thinking') waitingLabel = 'Thinking…';
+    else if (voiceState === 'speaking' && muted) waitingLabel = '🔇 Agent replied (muted)';
+    else if (isDone) waitingLabel = 'Conversation complete';
+
+    return {
+      messages,
+      isDone,
+      micDisabled: isDone || !!pendingConfirm || voiceState !== 'idle',
+      isListening: voiceState === 'listening',
+      isThinking: voiceState === 'thinking',
+      micBg: isDone ? 'oklch(0.85 0.01 75)' : (voiceState === 'listening' ? 'oklch(0.45 0.09 165)' : voiceState === 'thinking' ? 'oklch(0.7 0.13 55)' : 'oklch(0.45 0.09 165)'),
+      micAnim: voiceState === 'idle' && !isDone ? 'pulse 2.2s infinite' : 'none',
+      micLabel: isDone ? 'Conversation complete' : pendingConfirm ? 'Waiting for your answer' : voiceState === 'idle' ? 'Tap to continue talking' : ' ',
+      advance: this.advance,
+      reset: this.reset,
+      muted, notMuted: !muted,
+      toggleMute: this.toggleMute,
+      muteBtnStyle: 'border:none;background:none;cursor:pointer;width:26px;height:26px;display:flex;align-items:center;justify-content:center;border-radius:50%',
+      pages,
+      isHome: page === 'home',
+      isItinerary: page === 'itinerary',
+      isCheckout: page === 'checkout',
+      isConfirmMode, isSpeakingMode, isWaitingMode, waitingLabel,
+      captionText,
+      confirmYes: pendingConfirm ? pendingConfirm.onYes : () => {},
+      confirmNo: pendingConfirm ? pendingConfirm.onNo : () => {},
+      tripTitle: 'Lisbon & Porto',
+      tripSubtitle: '5 days · Sept 12–17 · 2 travelers',
+      flightCard, hotelCard, carCard, thingsCard,
+      showReviewCta: readyCount >= 4,
+      goItinerary: this.setPage('itinerary'),
+      goCheckout: this.setPage('checkout'),
+      itineraryDays: this.itineraryDays,
+      isPaid: paid,
+      isNotPaid: !paid,
+      isPayIdle: this.state.payStatus === 'idle',
+      isPayProcessing: this.state.payStatus === 'processing',
+      txnId: this.state.txnId,
+      pay: this.pay,
+    };
+  }
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,422 @@
+Skip Navigation
+Sabre
+
+No results found
+Search APIs, Documentation, Developer Guides
+
+SJ
+DeepLearning.AI Voice AI Hackathon
+v1
+Product Collection
+
+Menu
+Collapse
+Explore collection
+About
+Examples
+
+authentication-skills.md
+air-skills.md
+hotel-skills.md
+MCP Supported Use Cases
+mcp-tool-skill.md
+mcp-skills-skill.md
+MCP Sample Chatbot Tutorial
+Help
+
+MCP Server Setup
+MCP Tool API Reference
+Postman Collections
+Discord channel
+Sabre MCP Server Supported Travel Scenarios
+A list of supported scenarios, that highlights the capabilites exposed:
+
+Sub-Category / Feature	Scenario Description	Notes
+Search and Book Flight Workflow
+
+Multi-step workflow tool that provides an AI agent with a predefined sequence to search for flights (via FlightShop) and create a booking, without the agent needing to orchestrate individual API calls
+
+Declared in tool-reference.adoc; uses FlightShopAPI + BookingManagement
+
+Search and Book Hotel Workflow
+
+Multi-step workflow tool for searching hotels and creating a hotel booking, handling the full shopping-to-booking sequence
+
+Uses HotelSearch + HotelRates + HotelPriceCheck + BookingManagement APIs
+
+Flight Issued Ticket Management Workflow
+
+Workflow tool for checking ticket status or voiding already issued tickets on an existing booking, triggered by an agent
+
+Uses CheckFlightTickets and/or VoidFlightTickets from Booking Management
+
+Sub-Category / Feature	Scenario Description	Notes
+ATPCO / Traditional Booking (PNR)
+
+Create a traditional ATPCO/EDIFACT flight booking (PNR) by passing flight details directly, without NDC offer IDs
+
+Uses flightDetails instead of flightOffer; NN status retry logic included (up to 5 retries)
+
+ATPCO Booking Using Profiles
+
+Create a traditional ATPCO booking by pulling traveler and/or agency data from Sabre Profiles, including ticketing policy
+
+Supports both traveler (TVL) and agency (AGY) profile types
+
+LCC (Low-Cost Carrier) Booking
+
+Create a booking for low-cost carrier content exposed through Sabre
+
+NN status retry logic excluded for LCC; NN plays a different role in LCC flow
+
+Booking with Ancillary Services (ATPCO)
+
+Add ancillary services (e.g. extra baggage, meals) to an ATPCO booking at creation time
+
+Ancillary services currently NOT supported for NDC bookings
+
+Booking with Infant Traveler (Auto SSR)
+
+Create a booking with an infant traveler and leverage automatic INFT or INST SSR generation
+
+API auto-creates INFT (lap infant) or INST (seat-occupying infant) SSR; individual INF reshop not supported in Flight Reshop
+
+Booking with PSD2 / SCA Payment Authentication
+
+Create a hotel or NDC booking with Strong Customer Authentication (SCA) for PSD2-compliant credit card payments
+
+Supported from v1.9+ of Booking Management API; channel code MO/TO or eCommerce (EC)
+
+Sub-Category / Feature	Scenario Description	Notes
+Modify ATPCO / Traditional Booking (Limited)
+
+Update traveler details, phones/emails, frequent flyer numbers, identity documents, seat assignments, and remarks on a traditional ATPCO booking
+
+Requires prior Get Booking call to obtain bookingSignature; prevents race conditions
+
+Modify NDC Booking (Limited)
+
+Update an NDC booking with limited supported fields
+
+Limited NDC modification; NDC order managed via Order Management API internally
+
+Modify Group Booking
+
+Add, modify, or delete traveler details for group (PNR group) bookings
+
+Full add/modify/delete supported for group bookings; single traveler modification is add/modify only
+
+Modify CSL Hotel within a Booking
+
+Update hotel booking fields such as flight arrival/departure details, check-in/out dates, room product, corporate ID, loyalty number, lead guest, or form of payment
+
+Bolded fields (check-in/out outside date range, guest number, room product) require a re-shop step to obtain a new booking key first
+
+Hybrid Booking Modification (Air + Hotel)
+
+Modify a booking that contains both CSL hotel segments and traditional ATPCO or NDC flights
+
+Limited functionality for hybrid bookings; only committed and confirmed bookings can be modified
+
+Sub-Category / Feature	Scenario Description	Notes
+Get Full Normalized Booking View
+
+Retrieve a complete normalized view combining Sabre PNR and NDC Order for flights, hotels, cars, tickets, and remarks
+
+Single mandatory field: confirmationId (PNR Record Locator or Sabre Order ID)
+
+Get Partial Booking (returnOnly)
+
+Retrieve only specific sections of a reservation to improve performance
+
+returnOnly excludes downline API calls not needed; significantly improves response time
+
+Get Booking with Traveler Name Security Check
+
+Retrieve a booking with an additional security validation by matching traveler name against confirmationId, for PCI/compliance use cases
+
+givenName + middleName + surname are validated against the PNR for extra security
+
+Get Booking with Unmasked Payment Card Info
+
+Retrieve booking with unmasked credit card details, requires CCVIEW EPR keyword
+
+Requires specific EPR security attribute CCVIEW; access-controlled
+
+Sub-Category / Feature	Scenario Description	Notes
+Air + Car Booking in a Single Call
+
+Book flights alongside a car rental using a bookingKey from the Vehicle Price Check API, in a single Create Booking call
+
+bookingKey obtained from Vehicle Price Check API; DO_NOT_HALT_ON_CAR_BOOKING_ERROR policy available
+
+Sub-Category / Feature	Scenario Description	Notes
+Single Ticket Exchange (Change Date / Route)
+
+For a passenger needing to change an existing ATPCO ticket, search alternative itineraries compliant with carrier Voluntary Changes (Cat 31) rules
+
+Returns up to 50 alternative itinerary options with exchange cost per passenger; does NOT modify the PNR
+
+Multi-Ticket Exchange with Retain Journeys
+
+Reshop offers for multiple passengers while retaining specific unchanged flight legs
+
+Up to 9 tickets and 4 different PTCs; retain flights use flightItemId or flightDetails object
+
+Reshop with Branded Fare Filters
+
+Exchange into a specific branded fare tier or prevent brand downgrade during reshop
+
+Supports single or multiple brand IDs; can be applied per-journey or for entire itinerary
+
+Reshop with Alternate Airports
+
+Include alternate nearby airports in exchange shopping to find cheaper options
+
+locationVariant supports radius search or multiple location codes
+
+Reshop with Date Flexibility
+
+Search exchange offers across flexible departure dates
+
+Finds cheapest alternative dates within a window
+
+Reshop with Baggage Info for New Offers
+
+Return checked baggage allowances and charges for each reshopped offer
+
+Response includes checkedBaggageItems per offer and passenger
+
+Reshop with Voluntary Change / Refund Penalty Info
+
+Return max/min exchange fees and refund conditions for new itinerary options, with flexibility filters
+
+Uses Cat 31 (Voluntary Changes) and Cat 33 (Voluntary Refunds); max/min penalty calculations returned
+
+EMD Validation on Exchange
+
+Validate associated Electronic Miscellaneous Documents (EMDs) and return residual amounts during reshop
+
+EMD validation is automatic; associatedElectronicMiscellaneousDocuments returned in response. Non-associated EMDs not supported.
+
+Keep Original Booking Class / Brand on Retain Segments
+
+Prevent the API from changing the booking class or brand for unchanged (retained) legs during exchange shopping
+
+keepBookingClass must be true for all retain segments within a journey
+
+Sub-Category / Feature	Scenario Description	Notes
+One-Way / Round-Trip / Multi-City Search
+
+Search for one-way, round-trip, or multi-city flights across ATPCO, NDC, and LCC content sources
+
+Origin/destination/date mandatory. Supports Sabre EDIFACT, LCC and NDC content
+
+Airline & Alliance Filtering
+
+Filter search results by marketing or operating carrier or airline alliance
+
+Supports include and exclude filters for marketing and operating airlines
+
+Route Management (Stops / Connection Time)
+
+Control maximum number of stops and min/max connection time windows
+
+Can also exclude specific connection time windows
+
+Branded Fare / Upsell Shopping
+
+Return multiple branded fare options (upsell) for each journey
+
+Returns additional offer solutions per journey including branded tiers
+
+Corporate Fare Shopping
+
+Shop using corporate account codes or company IDs to return private/negotiated fares
+
+Supports account codes across ATPCO and NDC distribution models
+
+Fare Attribute Filtering
+
+Filter results by free baggage, carry-on, free refund, or free change
+
+Narrows results to fares with specific included attributes
+
+Baggage & Carry-On Info
+
+Return checked and carry-on baggage allowances and charges with each offer
+
+Response includes checkedBaggageItems and carryOnBaggageItems arrays
+
+Carbon Emission Data
+
+Return carbon emission data alongside flight offers
+
+Supports sustainability-focused AI agent scenarios
+
+Non-Stop / Diversity Options
+
+Request a specific number of non-stop solutions alongside connecting options
+
+Applicable to ATPCO content; promotes diverse result sets
+
+LCC / NDC / Multi-Source Shopping
+
+Shop low-cost carrier (LCC) and NDC content alongside traditional ATPCO fares, or from Sabre Cache
+
+Source management controls which content types and providers are queried
+
+Virtual Interline / Separate One-Ways
+
+Combine independent offers into a single trip or return separate one-way options
+
+returnVirtualInterlines combines offers from multiple independent itineraries
+
+Global Shopping (Multi-PCC)
+
+Compare and validate offers across multiple PCCs
+
+Supports multi-PCC compare scenarios via Global Shopping
+
+Date Flexibility Search
+
+Search for the best offers across alternate departure dates
+
+Upcoming capability noted in FlightShop user guide
+
+Tax Breakdown Return
+
+Return itemised tax and fee breakdown per offer
+
+Guaranteed for ATPCO; may not be available for all NDC carriers
+
+Sub-Category / Feature	Scenario Description	Notes
+ATPCO Ticket + EMD Fulfillment
+
+Issue multiple air tickets and Electronic Miscellaneous Documents (EMDs) for an ATPCO booking in a single call, with printer designation and error handling
+
+Issues tickets for all eligible segments; deletes accounting lines pre-ticketing; stores document numbers in booking
+
+NDC Order Fulfillment
+
+Fulfill an entire NDC order in a single call, including 3DSv2 (PSD2) SCA payment for credit card transactions
+
+NDC fulfills entire order (all order items) at once; hybrid ATPCO+NDC bookings NOT supported
+
+Sub-Category / Feature	Scenario Description	Notes
+Evaluate Ticket Conditions
+
+Check if issued tickets are eligible for void, refund, or exchange, including the calculation of applicable penalties.
+
+EMDs are currently not supported for condition evaluation; a designatePrinters object is mandatory.
+
+Refund Specific Flight Tickets
+
+Process a refund for a specific list of issued flight tickets (up to 12) using their electronic document numbers.
+
+Mandatory to include a designatePrinters object; mutually exclusive with confirmationId.
+
+Refund All Tickets in a Booking
+
+Process a refund for all refundable flight tickets associated with a specific PNR booking reference.
+
+Mandatory to include a designatePrinters object; mutually exclusive with specifying individual ticket numbers.
+
+Refund ATPCO Electronic Tickets (with Qualifiers)
+
+Process a refund for issued ATPCO tickets with optional refund qualifiers to override standard calculations.
+
+Qualifiers allow applying waiver codes, overriding cancel fees, overriding taxes, or altering commission amounts.
+
+Refund Electronic Miscellaneous Documents (EMDs)
+
+Process a refund for EMDs or a combination of Tickets and EMDs by defining the documentsType parameter.
+
+Dependent on airline policy; not supported during the preliminary /checkFlightTickets evaluation step.
+
+Void Specific/All Tickets
+
+Void issued tickets with a full refund and no penalties if they are within the eligible void period (typically 24 hours).
+
+Must construct the payload with either a list of ticket numbers OR a confirmationId, never both simultaneously.
+
+Sub-Category / Feature	Scenario Description	Notes
+Check Voidability / Refundability / Exchangeability
+
+Check whether existing ATPCO electronic tickets can be voided, refunded, or exchanged
+
+Refund check currently limited to electronic tickets; exchangeability checked for ATPCO and NDC Sabre Orders
+
+Sub-Category / Feature	Scenario Description	Notes
+Void ATPCO Tickets and EMDs
+
+Void issued ATPCO electronic tickets and EMDs within the allowable airline or BSP void window
+
+Supports both electronic tickets (ETK) and EMDs; must be within void window
+
+Sub-Category / Feature	Scenario Description	Notes
+Hotel Booking Creation (CSL / Aggregator)
+
+Book a CSL hotel (aggregator or Sabre GDS property) using the bookingKey from the Price Check API, assigning rooms to travelers
+
+agency.address is required for hotel bookings; legacy GDS hotel content has been blocked in Sabre (CSL only)
+
+Hotel Booking with Credit Card Payment (PSD2/SCA)
+
+Create a hotel booking using a credit card with Strong Customer Authentication for PSD2 compliance
+
+Supported from API v1.9+; specify SCA info under payment.formsOfPayment.authentications
+
+Hotel Booking Cancellation
+
+Cancel an existing hotel segment within a Sabre booking
+
+Uses the same cancelBooking endpoint as air cancellation
+
+Hotel Booking Modification
+
+Modify an existing CSL hotel booking (check-in/out dates, room type, corporate ID, loyalty number, guest, form of payment, etc.)
+
+Fields that require re-shop: check-in/checkout date outside date range, guest number, room product code
+
+Sub-Category / Feature	Scenario Description	Notes
+Hotel Availability Search (Geo / Radius)
+
+Search for available hotel properties within a geographic area, city, or radius
+
+First step in hotel shopping flow; returns list of matching property IDs and summary data
+
+Hotel Rate Details Retrieval
+
+Retrieve comprehensive room types, rate plans, and inventory details for a specific property
+
+Second step in hotel shopping flow; provides room-level rate and availability details
+
+Hotel Rate Confirmation (Price Check)
+
+Confirm the final price and availability of a specific room/rate with the supplier before booking, and obtain a booking key
+
+Returns a bookingKey required by Create Booking; protects against rate changes between search and book
+
+Sub-Category / Feature	Scenario Description	Notes
+Air + Hotel Booking in a Single Call
+
+Book flights (ATPCO or NDC) and a CSL hotel simultaneously in a single Create Booking request, returning a unified booking reference
+
+errorHandlingPolicy can be set to DO_NOT_HALT_ON_HOTEL_BOOKING_ERROR to continue if hotel fails
+
+Discord graphic
+💬 Join our Discord channel at discord.com/invite/Taqjf6pJ4k to keep up to date with everything around the hackathon.
+
+Missing information on this page? Let Us know
+Go to the top
+© 2015-2026 Sabre GLBL Inc.
+Privacy Policy
+Support
+Cookies
+
+
+
+DeepLearning.AI Voice AI Hackathon | Developer Hub
+
+Feedback

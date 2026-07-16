@@ -1,0 +1,26 @@
+{
+  "pnr": "WFTEST",
+  "status": "CONFIRMED",
+  "flight": {
+    "id": "f2",
+    "flight_number": "AA1847",
+    "depart": "2026-07-18T10:30:00",
+    "arrive": "2026-07-18T14:15:00",
+    "origin": "MCO",
+    "destination": "CUN"
+  },
+  "hotel": {
+    "id": "h1",
+    "name": "Fiesta Americana Coral Beach",
+    "check_in": "2026-07-18",
+    "check_out": "2026-07-22",
+    "confirmation_number": "FIXTURE-HOTEL-001"
+  },
+  "car": {
+    "id": "c1",
+    "vendor": "Hertz",
+    "category": "mid-size",
+    "pickup": "2026-07-18T15:00:00",
+    "confirmation_number": "FIXTURE-CAR-001"
+  }
+}

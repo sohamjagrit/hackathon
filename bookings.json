@@ -1,0 +1,138 @@
+{
+  "smoke-002": {
+    "session_id": "smoke-002",
+    "pnr": "7HZK70",
+    "flight": {
+      "id": "f1",
+      "carrier": "AA",
+      "flight_number": "AA2121",
+      "origin": "MCO",
+      "destination": "CUN",
+      "depart": "2026-07-17T08:10:00",
+      "arrive": "2026-07-17T12:05:00",
+      "duration_minutes": 175,
+      "stops": 1,
+      "stop_airports": [
+        "MIA"
+      ],
+      "price_usd": 231,
+      "cabin": "ECONOMY",
+      "offer_id": "FIXTURE-F1-AA2121"
+    },
+    "hotel": {
+      "id": "h1",
+      "name": "Fiesta Americana Coral Beach Cancun Resort & Spa",
+      "chain": "Fiesta Americana",
+      "property_id": "FIXTURE-H1-FACB",
+      "rate_usd": 179,
+      "check_in": "2026-07-17",
+      "check_out": "2026-07-21",
+      "nights": 4,
+      "amenities": [
+        "pool",
+        "beach",
+        "spa",
+        "oceanview",
+        "restaurants"
+      ],
+      "rating": 4.5,
+      "area": "Hotel Zone",
+      "address": "Blvd Kukulcan km 9.5, Hotel Zone, Cancun"
+    },
+    "car": {
+      "id": "c1",
+      "vendor": "Hertz",
+      "category": "mid-size",
+      "model": "Toyota Camry or similar",
+      "rate_usd_per_day": 31,
+      "pickup": "2026-07-17T15:00:00",
+      "dropoff": "2026-07-21T12:00:00",
+      "days": 4,
+      "total_usd": 124,
+      "pickup_location": "CUN Airport",
+      "dropoff_location": "CUN Airport",
+      "rate_key": "FIXTURE-C1-HTZ-MIDSIZE"
+    },
+    "nights": 4,
+    "total_usd": 1071.0
+  },
+  "a139ce02-138e-4af2-a874-3699c44f6ca1": {
+    "session_id": "a139ce02-138e-4af2-a874-3699c44f6ca1",
+    "pnr": "T8299G",
+    "flight": {
+      "id": "f1",
+      "carrier": "AA",
+      "flight_number": "AA2121",
+      "origin": "MCO",
+      "destination": "CUN",
+      "depart": "2026-07-18T08:10:00",
+      "arrive": "2026-07-18T12:05:00",
+      "duration_minutes": 175,
+      "stops": 1,
+      "stop_airports": [
+        "MIA"
+      ],
+      "price_usd": 231,
+      "cabin": "ECONOMY",
+      "offer_id": "FIXTURE-F1-AA2121"
+    },
+    "hotel": {
+      "id": "h3",
+      "name": "Hotel Ambiance Suites Cancun",
+      "chain": "Independent",
+      "property_id": "FIXTURE-H3-HAS",
+      "rate_usd": 142,
+      "check_in": "2026-07-18",
+      "check_out": "2026-07-22",
+      "nights": 4,
+      "amenities": [
+        "pool",
+        "free-breakfast",
+        "gym"
+      ],
+      "rating": 4.1,
+      "area": "Hotel Zone",
+      "address": "Blvd Kukulcan km 3.5, Hotel Zone, Cancun"
+    },
+    "car": null,
+    "nights": 4,
+    "total_usd": 799.0
+  },
+  "5fcdd178-4bc5-45dc-8ce5-73dd22157da7": {
+    "session_id": "5fcdd178-4bc5-45dc-8ce5-73dd22157da7",
+    "pnr": "BOYCQZ",
+    "flight": {
+      "id": "f1",
+      "carrier": "B6",
+      "flight_number": "113",
+      "origin": "MCO",
+      "destination": "CUN",
+      "depart": "2026-07-18T06:20:00",
+      "arrive": "2026-07-18T07:25:00",
+      "stops": 0,
+      "price_usd": 327.08,
+      "offer_id": "7018af87-c7b3-4c4f-a07c-7eb0e5b9697c"
+    },
+    "hotel": {
+      "id": "h2",
+      "name": "Courtyard By Marriott Cancun Airport",
+      "property_id": "100114220",
+      "rate_usd": 123.82,
+      "check_in": "2026-07-18",
+      "check_out": "2026-07-22",
+      "nights": 4,
+      "amenities": [
+        "Free airport shuttle",
+        "Outdoor pool",
+        "Restaurant",
+        "Business center",
+        "Health club"
+      ],
+      "rating": 4.0,
+      "area": "CUN"
+    },
+    "car": null,
+    "nights": 4,
+    "total_usd": 822.3599999999999
+  }
+}

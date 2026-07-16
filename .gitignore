@@ -1,0 +1,6 @@
+.env
+__pycache__/
+.venv/
+node_modules/
+.DS_Store
+.claude/guides/sabre-developer-guide.txt

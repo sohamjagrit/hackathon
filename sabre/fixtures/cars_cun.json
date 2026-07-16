@@ -1,0 +1,44 @@
+[
+  {
+    "id": "c1",
+    "vendor": "Hertz",
+    "category": "mid-size",
+    "model": "Toyota Camry or similar",
+    "rate_usd_per_day": 31,
+    "pickup": "2026-07-18T15:00:00",
+    "dropoff": "2026-07-22T12:00:00",
+    "days": 4,
+    "total_usd": 124,
+    "pickup_location": "CUN Airport",
+    "dropoff_location": "CUN Airport",
+    "rate_key": "FIXTURE-C1-HTZ-MIDSIZE"
+  },
+  {
+    "id": "c2",
+    "vendor": "Budget",
+    "category": "compact",
+    "model": "Nissan Versa or similar",
+    "rate_usd_per_day": 24,
+    "pickup": "2026-07-18T15:00:00",
+    "dropoff": "2026-07-22T12:00:00",
+    "days": 4,
+    "total_usd": 96,
+    "pickup_location": "CUN Airport",
+    "dropoff_location": "CUN Airport",
+    "rate_key": "FIXTURE-C2-BGT-COMPACT"
+  },
+  {
+    "id": "c3",
+    "vendor": "Alamo",
+    "category": "full-size",
+    "model": "Toyota Corolla or similar",
+    "rate_usd_per_day": 38,
+    "pickup": "2026-07-18T15:00:00",
+    "dropoff": "2026-07-22T12:00:00",
+    "days": 4,
+    "total_usd": 152,
+    "pickup_location": "CUN Airport",
+    "dropoff_location": "CUN Airport",
+    "rate_key": "FIXTURE-C3-ALM-FULLSIZE"
+  }
+]

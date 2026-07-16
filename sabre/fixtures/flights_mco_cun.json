@@ -1,0 +1,50 @@
+[
+  {
+    "id": "f1",
+    "carrier": "B6",
+    "flight_number": "113",
+    "origin": "MCO",
+    "destination": "CUN",
+    "depart": "2026-07-18T06:20:00",
+    "arrive": "2026-07-18T07:25:00",
+    "stops": 0,
+    "price_usd": 327.08,
+    "offer_id": "7018af87-c7b3-4c4f-a07c-7eb0e5b9697c"
+  },
+  {
+    "id": "f2",
+    "carrier": "B6",
+    "flight_number": "2567",
+    "origin": "MCO",
+    "destination": "CUN",
+    "depart": "2026-07-18T06:24:00",
+    "arrive": "2026-07-18T07:34:00",
+    "stops": 0,
+    "price_usd": 327.08,
+    "offer_id": "2d64d9dc-9082-4e91-a4fb-65ed500e0acc"
+  },
+  {
+    "id": "f3",
+    "carrier": "AM",
+    "flight_number": "441",
+    "origin": "MCO",
+    "destination": "CUN",
+    "depart": "2026-07-18T14:07:00",
+    "arrive": "2026-07-18T20:45:00",
+    "stops": 1,
+    "price_usd": 327.08,
+    "offer_id": "5fa0c49a-0950-4a27-9f67-9245688aed9d"
+  },
+  {
+    "id": "f4",
+    "carrier": "AM",
+    "flight_number": "1372",
+    "origin": "MCO",
+    "destination": "CUN",
+    "depart": "2026-07-18T16:10:00",
+    "arrive": "2026-07-18T20:23:00",
+    "stops": 1,
+    "price_usd": 331.58,
+    "offer_id": "c730e4af-f218-42b8-ad49-f19766a0a687"
+  }
+]

@@ -1,0 +1,39 @@
+[
+  {
+    "id": "h1",
+    "name": "Marriott Casamagna Cancun Resort",
+    "property_id": "100037282",
+    "rate_usd": 467.0,
+    "check_in": "2026-07-18",
+    "check_out": "2026-07-22",
+    "nights": 4,
+    "amenities": [
+      "Complimentary in-room coffee or tea",
+      "Lounges/bars",
+      "Outdoor pool",
+      "Restaurant",
+      "Spa",
+      "Health club"
+    ],
+    "rating": 4.5,
+    "area": "CUN"
+  },
+  {
+    "id": "h2",
+    "name": "Courtyard By Marriott Cancun Airport",
+    "property_id": "100114220",
+    "rate_usd": 123.82,
+    "check_in": "2026-07-18",
+    "check_out": "2026-07-22",
+    "nights": 4,
+    "amenities": [
+      "Free airport shuttle",
+      "Outdoor pool",
+      "Restaurant",
+      "Business center",
+      "Health club"
+    ],
+    "rating": 4.0,
+    "area": "CUN"
+  }
+]
