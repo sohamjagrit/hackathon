@@ -1,0 +1,17 @@
+[
+  {
+    "id": "1",
+    "name": "get_weather",
+    "description": "Get current weather and a 3-day forecast for any city. Pass the city's latitude and longitude (you know these for major cities). Returns temperatures in Fahrenheit, precipitation chance, and conditions as weather codes (0=clear, 1-3=partly cloudy, 45-48=fog, 51-67=rain, 71-77=snow, 80-82=showers, 95-99=thunderstorm).",
+    "method": "GET",
+    "url": "https://api.open-meteo.com/v1/forecast?current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,weather_code&temperature_unit=fahrenheit&timezone=auto&forecast_days=3",
+    "auth": { "type": "none" },
+    "parameters": [
+      { "name": "latitude", "type": "number", "required": true, "location": "query", "description": "City latitude, e.g. 32.78 for Dallas" },
+      { "name": "longitude", "type": "number", "required": true, "location": "query", "description": "City longitude, e.g. -96.81 for Dallas" }
+    ],
+    "timeout": 15,
+    "max_retries": 2,
+    "enabled": true
+  }
+]

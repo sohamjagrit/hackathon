@@ -24,6 +24,8 @@ from pathlib import Path
 from typing import Any, Dict, Optional
 from uuid import UUID
 
+from langchain_core.callbacks import BaseCallbackHandler
+
 CAPTURE = os.environ.get("CAPTURE", "0") == "1"
 CAPTURES_DIR = Path(__file__).parent / "captures"
 LOGS_DIR = Path(__file__).parent / "logs"
@@ -56,10 +58,11 @@ def _write_log(entry: dict) -> None:
         f.write(json.dumps(entry) + "\n")
 
 
-class MCPObservabilityHandler:
+class MCPObservabilityHandler(BaseCallbackHandler):
     """LangChain callback handler that logs every MCP tool call."""
 
     def __init__(self):
+        super().__init__()
         self._t0: dict[str, float] = {}
         self._names: dict[str, str] = {}
         self._inputs: dict[str, str] = {}
@@ -135,11 +138,6 @@ class MCPObservabilityHandler:
             "duration_ms": elapsed,
             "error": True,
         })
-
-    # Make it usable as a LangChain callback list entry
-    def __iter__(self):
-        yield self
-
 
 def _pnr() -> str:
     """Last-resort PNR placeholder if the booking response is missing one."""
@@ -273,9 +271,12 @@ async def search_flights(
         f"- PCC: {pcc}\n\n"
         f"Use the Sabre MCP tools (load the FlightShop OpenAPI spec first to learn "
         f"the schema, then call callSabreAPI). "
-        f"Return ONLY a valid JSON array of up to 4 options — no markdown, no explanation:\n"
-        f'[{{"id":"f1","carrier":"AA","flight_number":"AA123","origin":"{origin}",'
-        f'"destination":"{destination}","depart":"YYYY-MM-DDTHH:MM:SS","arrive":"YYYY-MM-DDTHH:MM:SS",'
+        f"Return ONLY a valid JSON array of up to 10 options — no markdown, no explanation.\n"
+        f"Include the full airline name in airline_name (e.g. 'JetBlue Airways', 'American Airlines').\n"
+        f"Calculate duration from depart/arrive times and format as e.g. '2h 45m'.\n"
+        f'[{{"id":"f1","carrier":"B6","airline_name":"JetBlue Airways","flight_number":"B6204",'
+        f'"origin":"{origin}","destination":"{destination}",'
+        f'"depart":"YYYY-MM-DDTHH:MM:SS","arrive":"YYYY-MM-DDTHH:MM:SS","duration":"2h 45m",'
         f'"stops":0,"price_usd":299.0,"offer_id":"<offer-id from response>"}}]'
     )
     raw = await _sabre_agent_run(task)

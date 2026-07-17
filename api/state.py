@@ -10,9 +10,7 @@ BOOKINGS_FILE = os.path.join(os.path.dirname(__file__), "..", "bookings.json")
 @dataclass
 class LegState:
     status: str = "empty"
-    # Status values: empty | loading | options | selected | confirmed
-    #                conflict | cancelled | pending_change  (Act 2 only)
-    options: list[dict] = field(default_factory=list)
+    options: list = field(default_factory=list)
     selected_id: Optional[str] = None
     detail: Optional[str] = None
 
@@ -22,17 +20,27 @@ class SessionState:
     session_id: str
     flight: LegState = field(default_factory=LegState)
     hotel: LegState = field(default_factory=LegState)
-    car: LegState = field(default_factory=LegState)
     pnr: Optional[str] = None
-    transaction_id: Optional[str] = None
     total_usd: Optional[float] = None
+    # Raw options stored for booking lookup
+    flight_options: list = field(default_factory=list)
+    hotel_options: list = field(default_factory=list)
+    selected_flight: Optional[dict] = None
+    selected_hotel: Optional[dict] = None
+    # Trip context
+    origin: str = ""
+    destination: str = ""
+    depart_date: str = ""
+    return_date: str = ""
+    nights: int = 4
+    pax: int = 1
 
 
-# In-memory session state (reset on restart — fine for dev)
 sessions: dict[str, SessionState] = {}
-
-# Per-session SSE queues
 event_queues: dict[str, asyncio.Queue] = {}
+
+# Last session_id registered via /api/voice-token — used by init tool
+active_session_id: Optional[str] = None
 
 
 def get_or_create_session(session_id: str) -> SessionState:
@@ -40,6 +48,16 @@ def get_or_create_session(session_id: str) -> SessionState:
         sessions[session_id] = SessionState(session_id=session_id)
         event_queues[session_id] = asyncio.Queue()
     return sessions[session_id]
+
+
+def set_active_session(session_id: str) -> None:
+    global active_session_id
+    active_session_id = session_id
+    get_or_create_session(session_id)
+
+
+def get_active_session_id() -> Optional[str]:
+    return active_session_id
 
 
 async def emit_event(session_id: str, event_type: str, payload: dict) -> None:
@@ -68,7 +86,6 @@ def load_booking(session_id: str) -> Optional[dict]:
 
 
 def load_active_booking() -> Optional[dict]:
-    """Most recent confirmed booking — used by hotel agent context pull."""
     if not os.path.exists(BOOKINGS_FILE):
         return None
     with open(BOOKINGS_FILE) as f:

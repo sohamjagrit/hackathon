@@ -1,0 +1,32 @@
+[
+  {
+    "name": "leg_loading",
+    "description": "A leg search has started. Trigger before calling Sabre search tools.",
+    "direction": "agent_to_app"
+  },
+  {
+    "name": "show_flights",
+    "description": "Flight search results are ready. Payload must include an options array of flight objects.",
+    "direction": "agent_to_app"
+  },
+  {
+    "name": "show_hotels",
+    "description": "Hotel search results are ready. Payload must include an options array of hotel objects.",
+    "direction": "agent_to_app"
+  },
+  {
+    "name": "flight_selected",
+    "description": "User picked a flight. Payload must include offer_id and a human-readable detail string.",
+    "direction": "agent_to_app"
+  },
+  {
+    "name": "hotel_selected",
+    "description": "User picked a hotel. Payload must include property_id and a human-readable detail string.",
+    "direction": "agent_to_app"
+  },
+  {
+    "name": "booking_confirmed",
+    "description": "Booking committed to Sabre. Payload must include pnr and total_usd.",
+    "direction": "agent_to_app"
+  }
+]

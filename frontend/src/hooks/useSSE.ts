@@ -13,11 +13,13 @@ export type LegStatus =
 export interface FlightOption {
   id: string
   carrier: string
+  airline_name: string
   flight_number: string
   origin: string
   destination: string
   depart: string
   arrive: string
+  duration: string
   stops: number
   price_usd: number
   offer_id: string

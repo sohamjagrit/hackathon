@@ -134,5 +134,42 @@
     "car": null,
     "nights": 4,
     "total_usd": 822.3599999999999
+  },
+  "fd118ecd-c2cd-40b5-9374-a5e5846d0a42": {
+    "session_id": "fd118ecd-c2cd-40b5-9374-a5e5846d0a42",
+    "pnr": "ERROR",
+    "flight": {
+      "id": "f63c96dd-ec42-4728-9878-468c25ddf979",
+      "carrier": "AA",
+      "flight_number": "2904",
+      "origin": "SFO",
+      "destination": "DFW",
+      "depart": "2026-07-19T08:00:00",
+      "arrive": "2026-07-19T13:40:00",
+      "stops": 0,
+      "price_usd": 360.4,
+      "offer_id": "f63c96dd-ec42-4728-9878-468c25ddf979"
+    },
+    "hotel": {
+      "id": "h1",
+      "name": "The Westin Dallas Fort Worth Airport",
+      "property_id": "100086854",
+      "rate_usd": 241.15,
+      "check_in": "2026-07-19",
+      "check_out": "2026-07-24",
+      "nights": 5,
+      "amenities": [
+        "Free airport shuttle",
+        "Pool",
+        "Restaurant",
+        "Health club",
+        "Parking",
+        "Air conditioning"
+      ],
+      "rating": 4.0,
+      "area": "DFW"
+    },
+    "nights": 5,
+    "total_usd": 1566.15
   }
 }

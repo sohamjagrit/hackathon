@@ -2,16 +2,19 @@ import httpx
 from fastapi import APIRouter, HTTPException
 
 from api.config import settings
+from api.state import set_active_session
 
 router = APIRouter()
 
 
 @router.post("/api/voice-token")
 async def voice_token(body: dict):
-    """Mint a VB LiveKit token server-side. The session_id ties the voice
-    session to the LangGraph thread and the SSE stream."""
     if not settings.vocal_bridge_api_key:
         raise HTTPException(500, "VOCAL_BRIDGE_API_KEY not configured")
+
+    session_id = body.get("session_id")
+    if session_id:
+        set_active_session(session_id)
 
     async with httpx.AsyncClient() as client:
         r = await client.post(
@@ -23,7 +26,7 @@ async def voice_token(body: dict):
             },
             json={
                 "participant_name": body.get("participant_name", "Traveler"),
-                "session_id": body.get("session_id"),
+                "session_id": session_id,
             },
             timeout=10,
         )
