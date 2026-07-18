@@ -42,9 +42,6 @@ event_queues: dict[str, asyncio.Queue] = {}
 # Last session_id registered via /api/voice-token — used by init tool
 active_session_id: Optional[str] = None
 
-# Act 2: proposed hotel change for the nested hotel-agent pull
-hotel_call_proposals: dict[str, dict] = {}
-
 
 def get_or_create_session(session_id: str) -> SessionState:
     if session_id not in sessions:
@@ -71,53 +68,28 @@ async def emit_event(session_id: str, event_type: str, payload: dict) -> None:
     )
 
 
-def _read_all_bookings() -> dict:
-    if not os.path.exists(BOOKINGS_FILE):
-        return {}
-    with open(BOOKINGS_FILE) as f:
-        return json.load(f)
-
-
 def persist_booking(session_id: str, data: dict) -> None:
-    existing = _read_all_bookings()
-    data = {**data, "session_id": session_id}
+    existing: dict = {}
+    if os.path.exists(BOOKINGS_FILE):
+        with open(BOOKINGS_FILE) as f:
+            existing = json.load(f)
     existing[session_id] = data
     with open(BOOKINGS_FILE, "w") as f:
         json.dump(existing, f, indent=2)
 
 
 def load_booking(session_id: str) -> Optional[dict]:
-    return _read_all_bookings().get(session_id)
-
-
-def load_booking_by_pnr(pnr: str) -> Optional[dict]:
-    """Find a persisted booking by confirmation code (case-insensitive)."""
-    needle = (pnr or "").strip().upper()
-    if not needle:
+    if not os.path.exists(BOOKINGS_FILE):
         return None
-    for booking in _read_all_bookings().values():
-        if str(booking.get("pnr", "")).strip().upper() == needle:
-            return booking
-    return None
+    with open(BOOKINGS_FILE) as f:
+        return json.load(f).get(session_id)
 
 
 def load_active_booking() -> Optional[dict]:
-    bookings = _read_all_bookings()
+    if not os.path.exists(BOOKINGS_FILE):
+        return None
+    with open(BOOKINGS_FILE) as f:
+        bookings: dict = json.load(f)
     if not bookings:
         return None
-    if active_session_id and active_session_id in bookings:
-        return bookings[active_session_id]
     return list(bookings.values())[-1]
-
-
-def set_hotel_call_proposal(session_id: str, proposal: dict) -> None:
-    hotel_call_proposals[session_id] = proposal
-
-
-def get_hotel_call_proposal(session_id: Optional[str] = None) -> Optional[dict]:
-    sid = session_id or active_session_id
-    if sid and sid in hotel_call_proposals:
-        return hotel_call_proposals[sid]
-    if hotel_call_proposals:
-        return list(hotel_call_proposals.values())[-1]
-    return None

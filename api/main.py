@@ -4,7 +4,7 @@ load_dotenv()
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from api.routes import context, events, paypal, recovery, tools, voice
+from api.routes import context, events, tools, voice
 
 app = FastAPI(title="Trip Agent API", version="0.2.0")
 
@@ -23,8 +23,6 @@ app.include_router(voice.router)
 app.include_router(tools.router)
 app.include_router(events.router)
 app.include_router(context.router)
-app.include_router(recovery.router)
-app.include_router(paypal.router)
 
 
 @app.get("/health")

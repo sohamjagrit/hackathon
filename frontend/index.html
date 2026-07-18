@@ -5,37 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Miles — your trip, spoken into being</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap"
       rel="stylesheet"
     />
     <style>
-      :root {
-        --color-ink: #232323;
-        --color-blue: #2743F4;
-        --color-rust: #DD4110;
-        --color-cream: #FFF7E4;
-        --color-gray: #D9D9D9;
-        --color-white: #FFFFFF;
-        --color-success: #2F6B4F;
-        --color-warning: #C8862E;
-        --color-error: #B23A2E;
-        --color-ink-08: rgba(35,35,35,0.08);
-        --color-ink-12: rgba(35,35,35,0.12);
-        --color-ink-40: rgba(35,35,35,0.40);
-        --font-display: 'Bricolage Grotesque', sans-serif;
-        --font-body: 'DM Sans', sans-serif;
-        --radius-sm: 8px;
-        --radius-md: 16px;
-        --radius-lg: 24px;
-        --radius-full: 999px;
-      }
       * { box-sizing: border-box; }
-      body { margin: 0; font-family: var(--font-body); background: var(--color-cream); }
-      @keyframes pulse { 0%{ box-shadow:0 0 0 0 rgba(39,67,244,.3);} 70%{ box-shadow:0 0 0 18px rgba(39,67,244,0);} 100%{ box-shadow:0 0 0 0 rgba(39,67,244,0);} }
+      body { margin: 0; font-family: 'Instrument Sans', sans-serif; background: oklch(0.97 0.012 75); }
+      @keyframes pulse { 0%{ box-shadow:0 0 0 0 rgba(58,110,94,.35);} 70%{ box-shadow:0 0 0 14px rgba(58,110,94,0);} 100%{ box-shadow:0 0 0 0 rgba(58,110,94,0);} }
       @keyframes fadeUp { from{ opacity:0; transform:translateY(6px);} to{ opacity:1; transform:translateY(0);} }
-      @keyframes fadeIn { from{ opacity:0; } to{ opacity:1; } }
       @keyframes bar1 { 0%,100%{ height:6px; } 50%{ height:20px; } }
       @keyframes bar2 { 0%,100%{ height:16px; } 50%{ height:6px; } }
       @keyframes bar3 { 0%,100%{ height:10px; } 50%{ height:22px; } }

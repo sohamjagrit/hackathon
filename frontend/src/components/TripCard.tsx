@@ -10,57 +10,41 @@ interface TripCardProps {
 }
 
 const STATUS_BADGE: Record<LegStatus, { label: string; bg: string; color: string }> = {
-  empty:          { label: '',              bg: 'transparent',              color: 'transparent' },
-  loading:        { label: 'Searching…',    bg: 'rgba(200,134,46,0.12)',    color: '#C8862E' },
-  options:        { label: 'Options',       bg: 'rgba(35,35,35,0.06)',      color: 'rgba(35,35,35,0.55)' },
-  selected:       { label: 'Selected',      bg: 'rgba(39,67,244,0.10)',     color: '#2743F4' },
-  confirmed:      { label: 'Confirmed ✓',   bg: 'rgba(47,107,79,0.12)',     color: '#2F6B4F' },
-  conflict:       { label: 'Conflict',      bg: 'rgba(200,134,46,0.12)',    color: '#C8862E' },
-  cancelled:      { label: 'Cancelled',     bg: 'rgba(178,58,46,0.10)',     color: '#B23A2E' },
-  pending_change: { label: 'Updating…',     bg: 'rgba(200,134,46,0.12)',    color: '#C8862E' },
+  empty:          { label: '',             bg: 'transparent',          color: 'transparent' },
+  loading:        { label: 'Searching…',   bg: 'oklch(0.93 0.03 180)', color: 'oklch(0.35 0.09 180)' },
+  options:        { label: 'Options',      bg: 'oklch(0.93 0.04 55)',  color: 'oklch(0.45 0.09 55)' },
+  selected:       { label: 'Selected',     bg: 'oklch(0.93 0.06 165)', color: 'oklch(0.35 0.09 165)' },
+  confirmed:      { label: 'Confirmed ✓',  bg: 'oklch(0.88 0.1 165)',  color: 'oklch(0.28 0.09 165)' },
+  conflict:       { label: 'Conflict',     bg: 'oklch(0.92 0.08 55)',  color: 'oklch(0.45 0.12 55)' },
+  cancelled:      { label: 'Cancelled',    bg: 'oklch(0.92 0.08 25)',  color: 'oklch(0.45 0.12 25)' },
+  pending_change: { label: 'Updating…',    bg: 'oklch(0.93 0.04 55)',  color: 'oklch(0.45 0.09 55)' },
 }
 
 const CARD_BORDER: Record<LegStatus, string> = {
-  empty:          'rgba(35,35,35,0.08)',
-  loading:        'rgba(200,134,46,0.30)',
-  options:        'rgba(35,35,35,0.10)',
-  selected:       'rgba(39,67,244,0.35)',
-  confirmed:      'rgba(47,107,79,0.40)',
-  conflict:       'rgba(200,134,46,0.45)',
-  cancelled:      'rgba(178,58,46,0.45)',
-  pending_change: 'rgba(200,134,46,0.30)',
+  empty:          'oklch(0.91 0.01 75)',
+  loading:        'oklch(0.85 0.04 180)',
+  options:        'oklch(0.85 0.06 55)',
+  selected:       'oklch(0.75 0.09 165)',
+  confirmed:      'oklch(0.65 0.14 165)',
+  conflict:       'oklch(0.78 0.1 55)',
+  cancelled:      'oklch(0.78 0.1 25)',
+  pending_change: 'oklch(0.78 0.1 55)',
 }
 
 function Spinner() {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 0' }}>
-      <div style={{
-        width: 16,
-        height: 16,
-        border: '2px solid rgba(39,67,244,0.2)',
-        borderTopColor: '#2743F4',
-        borderRadius: '50%',
-        animation: 'spin .7s linear infinite',
-        flexShrink: 0,
-      }} />
-      <span style={{
-        fontFamily: "'DM Sans', sans-serif",
-        fontSize: 13,
-        color: 'rgba(35,35,35,0.45)',
-      }}>
-        Searching live inventory…
-      </span>
+      <div style={{ width: 18, height: 18, border: '2px solid oklch(0.85 0.04 180)', borderTopColor: 'oklch(0.45 0.09 165)', borderRadius: '50%', animation: 'spin .7s linear infinite', flexShrink: 0 }} />
+      <span style={{ fontSize: 12.5, color: 'oklch(0.55 0.01 75)' }}>Searching live inventory…</span>
     </div>
   )
 }
 
-function fmtTime(iso?: string): string {
-  if (!iso) return '—'
-  const t = iso.includes('T') ? (iso.split('T')[1] ?? iso) : iso
+function fmtTime(iso: string): string {
+  const t = iso.split('T')[1] ?? iso
   const [hStr, mStr] = t.split(':')
   const h = parseInt(hStr, 10)
-  if (Number.isNaN(h)) return iso
-  const m = (mStr ?? '00').slice(0, 2)
+  const m = mStr ?? '00'
   return `${h % 12 || 12}:${m}${h < 12 ? 'am' : 'pm'}`
 }
 
@@ -70,78 +54,57 @@ function fmtTime(iso?: string): string {
 
 function FlightRow({ opt, selectedId, locked }: { opt: FlightOption; selectedId?: string; locked: boolean }) {
   const isSelected = opt.id === selectedId || opt.offer_id === selectedId
-  const numbers = String(opt.flight_number || '').split('/').map((value) => value.trim())
-  const outboundNumber = numbers[0] || opt.flight_number
-  const returnNumber = opt.return_flight_number || numbers[1]
-  const hasReturn = Boolean(returnNumber || opt.return_depart)
 
   return (
     <div style={{
-      padding: '10px 11px',
+      padding: '9px 11px',
       borderRadius: 10,
-      background: isSelected ? 'rgba(39,67,244,0.07)' : '#FAFAF8',
-      border: `1px solid ${isSelected ? 'rgba(39,67,244,0.28)' : 'rgba(35,35,35,0.08)'}`,
+      background: isSelected
+        ? 'oklch(0.91 0.1 165)'
+        : locked ? 'oklch(0.97 0.003 75)' : 'oklch(0.976 0.005 75)',
+      border: `1px solid ${isSelected ? 'oklch(0.68 0.14 165)' : 'oklch(0.91 0.01 75)'}`,
       display: 'grid',
       gridTemplateColumns: '1fr auto',
-      gap: '8px',
-      opacity: locked && !isSelected ? 0.4 : 1,
+      gap: '3px 8px',
+      opacity: locked && !isSelected ? 0.45 : 1,
       transition: 'all .25s',
       animation: 'fadeUp .18s ease',
     }}>
       {/* Row 1: airline + price */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-        <span style={{
-          fontFamily: "'DM Sans', sans-serif",
-          fontSize: 12.5,
-          fontWeight: 700,
-          color: isSelected ? '#2743F4' : '#232323',
-        }}>
+        <span style={{ fontSize: 12.5, fontWeight: 700, color: isSelected ? 'oklch(0.25 0.1 165)' : 'oklch(0.28 0.01 75)' }}>
           {opt.airline_name || opt.carrier}
         </span>
-        <span style={{
-          fontFamily: "'DM Sans', sans-serif",
-          fontSize: 11,
-          color: 'rgba(35,35,35,0.45)',
-          fontWeight: 400,
-        }}>
-          Round trip
+        <span style={{ fontSize: 11, color: 'oklch(0.58 0.01 75)', fontWeight: 400 }}>
+          {opt.flight_number}
         </span>
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 5, justifyContent: 'flex-end' }}>
-        <span style={{
-          fontFamily: "'Bricolage Grotesque', sans-serif",
-          fontSize: 13.5,
-          fontWeight: 700,
-          color: isSelected ? '#2743F4' : '#232323',
-        }}>
+        <span style={{ fontSize: 13.5, fontWeight: 700, color: isSelected ? 'oklch(0.28 0.1 165)' : 'oklch(0.25 0.01 75)' }}>
           ${Math.round(opt.price_usd)}
         </span>
         {isSelected && (
-          <span style={{ fontSize: 12, color: '#2743F4', fontWeight: 700 }}>✓</span>
+          <span style={{ fontSize: 12, color: 'oklch(0.45 0.1 165)', fontWeight: 700 }}>✓</span>
         )}
       </div>
 
-      <div className="journey-stack">
-        <div className="journey-leg">
-          <span className="journey-label">Outbound</span>
-          <span className="journey-route">
-            {opt.origin} → {opt.destination} · {outboundNumber}
-          </span>
-          <span className="journey-time">
-            {fmtTime(opt.depart)} → {fmtTime(opt.arrive)}
-          </span>
-        </div>
-        {hasReturn && (
-          <div className="journey-leg">
-            <span className="journey-label">Return</span>
-            <span className="journey-route">
-              {opt.return_origin || opt.destination} → {opt.return_destination || opt.origin} · {returnNumber}
-            </span>
-            <span className="journey-time">
-              {fmtTime(opt.return_depart)} → {fmtTime(opt.return_arrive)}
-            </span>
-          </div>
+      {/* Row 2: times + stops badge */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+        <span style={{ fontSize: 12, color: 'oklch(0.42 0.01 75)', fontVariantNumeric: 'tabular-nums' }}>
+          {fmtTime(opt.depart)} → {fmtTime(opt.arrive)}
+        </span>
+        {opt.duration && (
+          <span style={{ fontSize: 10.5, color: 'oklch(0.6 0.01 75)' }}>{opt.duration}</span>
         )}
+      </div>
+      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+        <span style={{
+          fontSize: 10, fontWeight: 600, padding: '2px 7px', borderRadius: 20,
+          background: opt.stops === 0 ? 'oklch(0.9 0.08 165)' : 'oklch(0.93 0.02 75)',
+          color: opt.stops === 0 ? 'oklch(0.35 0.1 165)' : 'oklch(0.5 0.01 75)',
+        }}>
+          {opt.stops === 0 ? 'Nonstop' : `${opt.stops} stop${opt.stops > 1 ? 's' : ''}`}
+        </span>
       </div>
     </div>
   )
@@ -159,65 +122,32 @@ function HotelRow({ opt, selectedId, locked }: { opt: HotelOption; selectedId?: 
     <div style={{
       padding: '9px 11px',
       borderRadius: 10,
-      background: isSelected ? 'rgba(39,67,244,0.07)' : '#FAFAF8',
-      border: `1px solid ${isSelected ? 'rgba(39,67,244,0.28)' : 'rgba(35,35,35,0.08)'}`,
+      background: isSelected ? 'oklch(0.91 0.1 165)' : 'oklch(0.976 0.005 75)',
+      border: `1px solid ${isSelected ? 'oklch(0.68 0.14 165)' : 'oklch(0.91 0.01 75)'}`,
       display: 'grid',
       gridTemplateColumns: '1fr auto',
       gap: '3px 8px',
-      opacity: locked && !isSelected ? 0.4 : 1,
+      opacity: locked && !isSelected ? 0.45 : 1,
       transition: 'all .25s',
       animation: 'fadeUp .18s ease',
     }}>
-      <div style={{
-        fontFamily: "'DM Sans', sans-serif",
-        fontWeight: 600,
-        fontSize: 12.5,
-        color: isSelected ? '#2743F4' : '#232323',
-        overflow: 'hidden',
-        textOverflow: 'ellipsis',
-        whiteSpace: 'nowrap',
-      }}>
+      <div style={{ fontWeight: 600, fontSize: 12.5, color: isSelected ? 'oklch(0.25 0.1 165)' : 'oklch(0.28 0.01 75)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
         {opt.name}
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 4, justifyContent: 'flex-end' }}>
-        <span style={{
-          fontFamily: "'Bricolage Grotesque', sans-serif",
-          fontSize: 13.5,
-          fontWeight: 700,
-          color: isSelected ? '#2743F4' : '#232323',
-        }}>
+        <span style={{ fontSize: 13.5, fontWeight: 700, color: isSelected ? 'oklch(0.28 0.1 165)' : 'oklch(0.25 0.01 75)' }}>
           ${Math.round(opt.rate_usd)}
         </span>
-        <span style={{
-          fontFamily: "'DM Sans', sans-serif",
-          fontSize: 10,
-          color: 'rgba(35,35,35,0.42)',
-        }}>/night</span>
-        {isSelected && (
-          <span style={{ fontSize: 12, color: '#2743F4', fontWeight: 700 }}>✓</span>
-        )}
+        <span style={{ fontSize: 10, color: 'oklch(0.6 0.01 75)' }}>/night</span>
+        {isSelected && <span style={{ fontSize: 12, color: 'oklch(0.45 0.1 165)', fontWeight: 700 }}>✓</span>}
       </div>
-      <div style={{
-        fontFamily: "'DM Sans', sans-serif",
-        fontSize: 11,
-        color: 'rgba(35,35,35,0.45)',
-        display: 'flex',
-        alignItems: 'center',
-        gap: 5,
-      }}>
-        {stars > 0 && (
-          <span style={{ color: '#C8862E' }}>{'★'.repeat(stars)}{'☆'.repeat(Math.max(0, 5 - stars))}</span>
-        )}
+      <div style={{ fontSize: 11, color: 'oklch(0.56 0.01 75)', display: 'flex', alignItems: 'center', gap: 5 }}>
+        {stars > 0 && <span>{'★'.repeat(stars)}{'☆'.repeat(Math.max(0, 5 - stars))}</span>}
         {opt.amenities && opt.amenities.length > 0 && (
           <span>{opt.amenities.slice(0, 2).join(' · ')}</span>
         )}
       </div>
-      <div style={{
-        fontFamily: "'DM Sans', sans-serif",
-        fontSize: 11,
-        color: 'rgba(35,35,35,0.42)',
-        textAlign: 'right',
-      }}>
+      <div style={{ fontSize: 11, color: 'oklch(0.6 0.01 75)', textAlign: 'right' }}>
         {opt.area}
       </div>
     </div>
@@ -225,7 +155,7 @@ function HotelRow({ opt, selectedId, locked }: { opt: HotelOption; selectedId?: 
 }
 
 // -------------------------------------------------------------------------
-// Confirmed banner
+// Confirmed banner (locked state)
 // -------------------------------------------------------------------------
 
 function ConfirmedBanner({ detail }: { detail?: string }) {
@@ -233,34 +163,19 @@ function ConfirmedBanner({ detail }: { detail?: string }) {
     <div style={{
       padding: '10px 12px',
       borderRadius: 10,
-      background: 'rgba(47,107,79,0.10)',
-      border: '1px solid rgba(47,107,79,0.35)',
+      background: 'oklch(0.88 0.1 165)',
+      border: '1px solid oklch(0.68 0.14 165)',
       display: 'flex',
       alignItems: 'center',
       gap: 8,
       animation: 'fadeUp .3s ease',
     }}>
-      <div style={{
-        width: 20,
-        height: 20,
-        borderRadius: '50%',
-        background: '#2F6B4F',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        flexShrink: 0,
-      }}>
+      <div style={{ width: 20, height: 20, borderRadius: '50%', background: 'oklch(0.45 0.12 165)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
         <svg width={11} height={11} viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round">
           <polyline points="20 6 9 17 4 12" />
         </svg>
       </div>
-      <span style={{
-        fontFamily: "'DM Sans', sans-serif",
-        fontSize: 12.5,
-        fontWeight: 500,
-        color: '#2F6B4F',
-        lineHeight: 1.4,
-      }}>
+      <span style={{ fontSize: 12.5, fontWeight: 500, color: 'oklch(0.25 0.1 165)', lineHeight: 1.4 }}>
         {detail || 'Booking confirmed'}
       </span>
     </div>
@@ -279,7 +194,7 @@ export function TripCard({ title, icon, kind, leg }: TripCardProps) {
 
   return (
     <div style={{
-      background: '#FFFFFF',
+      background: '#fff',
       border: `1px solid ${border}`,
       borderRadius: 16,
       padding: 16,
@@ -292,25 +207,9 @@ export function TripCard({ title, icon, kind, leg }: TripCardProps) {
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
         {icon}
-        <div style={{
-          fontFamily: "'DM Sans', sans-serif",
-          fontSize: 13.5,
-          fontWeight: 600,
-          flex: 1,
-          color: '#232323',
-        }}>
-          {title}
-        </div>
+        <div style={{ fontSize: 13.5, fontWeight: 600, flex: 1 }}>{title}</div>
         {badge.label && (
-          <div style={{
-            fontFamily: "'DM Sans', sans-serif",
-            fontSize: 10.5,
-            fontWeight: 600,
-            padding: '2px 9px',
-            borderRadius: 999,
-            background: badge.bg,
-            color: badge.color,
-          }}>
+          <div style={{ fontSize: 10.5, fontWeight: 600, padding: '2px 8px', borderRadius: 20, background: badge.bg, color: badge.color }}>
             {badge.label}
           </div>
         )}
@@ -324,7 +223,7 @@ export function TripCard({ title, icon, kind, leg }: TripCardProps) {
 
       {showOptions && leg.status !== 'confirmed' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 5, maxHeight: 380, overflowY: 'auto' }}>
-          {leg.options.slice(0, 15).map((opt) => {
+          {leg.options.slice(0, 10).map((opt) => {
             const o = opt as { id: string }
             if (kind === 'flight') {
               return <FlightRow key={o.id} opt={opt as FlightOption} selectedId={leg.selectedId} locked={locked} />
@@ -335,14 +234,7 @@ export function TripCard({ title, icon, kind, leg }: TripCardProps) {
       )}
 
       {showOptions && leg.status !== 'confirmed' && leg.options.length === 0 && leg.detail && (
-        <div style={{
-          fontFamily: "'DM Sans', sans-serif",
-          fontSize: 12.5,
-          color: 'rgba(35,35,35,0.5)',
-          lineHeight: 1.5,
-        }}>
-          {leg.detail}
-        </div>
+        <div style={{ fontSize: 12.5, color: 'oklch(0.42 0.01 75)', lineHeight: 1.5 }}>{leg.detail}</div>
       )}
     </div>
   )

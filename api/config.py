@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     sabre_token: str = ""
     sabre_pcc: str = "S5OM"
     sabre_mode: str = "fixture"
+    anthropic_api_key: str = ""
     paypal_client_id: str = ""
     paypal_client_secret: str = ""
     paypal_base: str = "https://api-m.sandbox.paypal.com"

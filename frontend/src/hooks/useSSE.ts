@@ -23,13 +23,6 @@ export interface FlightOption {
   stops: number
   price_usd: number
   offer_id: string
-  return_flight_number?: string
-  return_origin?: string
-  return_destination?: string
-  return_depart?: string
-  return_arrive?: string
-  return_duration?: string
-  return_stops?: number
 }
 
 export interface HotelOption {
@@ -66,49 +59,6 @@ export interface LegState {
   detail?: string
 }
 
-export interface SeatState {
-  status: 'choosing' | 'assigned'
-  preference?: 'window' | 'aisle'
-  assigned?: string
-  seatType?: string
-}
-
-export interface ForecastDay {
-  date: string
-  condition: string
-  high_f: number
-  low_f: number
-  precipitation_percent?: number
-}
-
-export interface DestinationActivity {
-  name: string
-  category?: string
-  description?: string
-}
-
-export interface DestinationGuide {
-  destination: string
-  forecast?: ForecastDay[]
-  activities?: DestinationActivity[]
-}
-
-export interface TripAddon {
-  name: string
-  code?: string
-  price_usd?: number
-  detail?: string
-}
-
-export interface TripSummary {
-  origin?: string
-  destination: string
-  depart_date?: string
-  return_date?: string
-  trip_type?: 'one-way' | 'round-trip'
-  travelers?: number
-}
-
 export interface TripState {
   flight: LegState
   hotel: LegState
@@ -116,16 +66,8 @@ export interface TripState {
   pnr?: string
   transactionId?: string
   totalUsd?: number
-  seats?: SeatState
-  addons?: TripAddon[]
   hotelCallStatus?: 'idle' | 'in_progress' | 'completed' | 'failed'
   hotelCallTranscript?: string
-  hotelCallContactMode?: 'stay_on_line' | 'callback'
-  bookingStatus?: 'committing' | 'confirmed' | 'failed'
-  destinationGuide?: DestinationGuide
-  tripSummary?: TripSummary
-  travelerCallbackStatus?: 'queued' | 'calling' | 'completed' | 'failed'
-  travelerCallbackTranscript?: string
 }
 
 const emptyLeg = (): LegState => ({ status: 'empty', options: [] })
@@ -171,56 +113,27 @@ function applyEvent(state: TripState, event: SSEEvent): TripState {
         hotel: { ...state.hotel, status: 'confirmed' },
         car: { ...state.car, status: 'confirmed' },
       }
-    case 'recovery_started': {
-      const cancelled = (payload.cancelled_leg as string) || 'flight'
-      const conflicts = Array.isArray(payload.conflict_legs)
-        ? (payload.conflict_legs as string[])
-        : ['hotel']
-      const next = { ...state }
-      if (cancelled === 'flight' || cancelled === 'hotel' || cancelled === 'car') {
-        next[cancelled] = { ...next[cancelled], status: 'cancelled' }
+    case 'recovery_started':
+      return {
+        ...state,
+        flight: { ...state.flight, status: 'cancelled' },
+        hotel: { ...state.hotel, status: 'conflict' },
+        car: { ...state.car, status: 'conflict' },
       }
-      for (const leg of conflicts) {
-        if (leg === 'flight' || leg === 'hotel' || leg === 'car') {
-          next[leg] = { ...next[leg], status: 'conflict' }
-        }
-      }
-      return next
-    }
     case 'hotel_call_status':
       return {
         ...state,
         hotelCallStatus: payload.status as TripState['hotelCallStatus'],
         hotelCallTranscript: (payload.transcript_line as string) ?? state.hotelCallTranscript,
-        hotelCallContactMode:
-          (payload.contact_mode as TripState['hotelCallContactMode']) ??
-          state.hotelCallContactMode,
       }
-    case 'traveler_callback_status':
+    case 'recovery_confirmed':
       return {
         ...state,
-        travelerCallbackStatus: payload.status as TripState['travelerCallbackStatus'],
-        travelerCallbackTranscript:
-          (payload.transcript_line as string) ?? state.travelerCallbackTranscript,
-      }
-    case 'recovery_confirmed': {
-      const itinerary = (payload.itinerary as Record<string, { detail?: string }> | undefined) ?? {}
-      return {
-        ...state,
-        pnr: (payload.pnr as string) ?? state.pnr,
-        flight: {
-          ...state.flight,
-          status: 'confirmed',
-          detail: itinerary.flight?.detail ?? state.flight.detail,
-        },
-        hotel: {
-          ...state.hotel,
-          status: 'confirmed',
-          detail: itinerary.hotel?.detail ?? state.hotel.detail,
-        },
+        flight: { ...state.flight, status: 'confirmed' },
+        hotel: { ...state.hotel, status: 'confirmed' },
+        car: { ...state.car, status: 'confirmed' },
         hotelCallStatus: 'completed',
       }
-    }
     default:
       return state
   }
