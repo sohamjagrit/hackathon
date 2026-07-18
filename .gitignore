@@ -1,6 +1,8 @@
 .env
 __pycache__/
+frontend/dist/
 .venv/
 node_modules/
 .DS_Store
 .claude/guides/sabre-developer-guide.txt
+agents/mcp_servers.json

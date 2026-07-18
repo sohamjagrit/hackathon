@@ -171,5 +171,220 @@
     },
     "nights": 5,
     "total_usd": 1566.15
+  },
+  "act2-test": {
+    "session_id": "act2-test",
+    "pnr": "ACT2P1",
+    "flight": {
+      "flight_number": "AA1",
+      "detail": "AA1 8am"
+    },
+    "hotel": {
+      "name": "Test Hotel",
+      "check_in": "2026-07-20",
+      "check_out": "2026-07-24",
+      "nights": 4
+    },
+    "flight_cancelled": true,
+    "hotel_conflict": true,
+    "disruption": {
+      "cancelled_leg": "flight",
+      "conflict_legs": [
+        "hotel"
+      ]
+    },
+    "recovery_flight_detail": "AA2 6:05am",
+    "proposed_hotel": {
+      "check_in": "2026-07-21",
+      "check_out": "2026-07-24",
+      "nights": 3
+    }
+  },
+  "5e0637ef-7a30-4247-b962-c8b3579ac341": {
+    "session_id": "5e0637ef-7a30-4247-b962-c8b3579ac341",
+    "pnr": "OBKEVM",
+    "total_usd": 2737.98,
+    "flight": {
+      "id": "f1",
+      "carrier": "AA",
+      "airline_name": "American Airlines",
+      "flight_number": "AA2228/AA1430",
+      "origin": "SFO",
+      "destination": "DFW",
+      "depart": "2026-07-19T23:20:00",
+      "arrive": "2026-07-20T04:59:00",
+      "duration": "3h 39m outbound, 3h 42m return",
+      "stops": 0,
+      "price_usd": 612.81,
+      "offer_id": "2e791c56-71b9-429c-8d33-c258682a4bdc",
+      "detail": "American Airlines AA2228 outbound and AA1430 return, all nonstop, $612.81"
+    }
+  },
+  "c8fedd5c-57ef-49ea-8472-08e6c524060c": {
+    "session_id": "c8fedd5c-57ef-49ea-8472-08e6c524060c",
+    "pnr": "RBTTXV",
+    "total_usd": 2702.4,
+    "flight": {
+      "id": "f1",
+      "carrier": "DL",
+      "airline_name": "Delta",
+      "flight_number": "DL2267+DL420",
+      "origin": "SFO",
+      "destination": "DFW",
+      "depart": "2026-07-17T16:39:00",
+      "arrive": "2026-07-17T23:59:00",
+      "duration": "7h20m",
+      "stops": 1,
+      "price_usd": 590.4,
+      "offer_id": "836a0d45-9881-423c-a7bf-4c08b5e75aa3",
+      "detail": "Delta flight DL2267+DL420, departing 4:39pm with one stop, $590.40"
+    },
+    "flight_cancelled": true,
+    "hotel_conflict": true,
+    "disruption": {
+      "cancelled_leg": "flight",
+      "conflict_legs": [
+        "hotel"
+      ]
+    }
+  },
+  "55dacce4-5339-41b4-82c7-70a4cde955da": {
+    "session_id": "55dacce4-5339-41b4-82c7-70a4cde955da",
+    "pnr": "ONDTJT",
+    "total_usd": 2182.1,
+    "flight": {
+      "id": "f1",
+      "carrier": "UA",
+      "airline_name": "United Airlines",
+      "flight_number": "UA2374",
+      "origin": "SFO",
+      "destination": "PHX",
+      "depart": "2026-10-19T08:15:00",
+      "arrive": "2026-10-19T10:18:00",
+      "duration": "2h 3m",
+      "stops": 0,
+      "return_flight_number": "UA693",
+      "return_origin": "PHX",
+      "return_destination": "SFO",
+      "return_depart": "2026-10-23T19:40:00",
+      "return_arrive": "2026-10-23T21:44:00",
+      "return_duration": "2h 4m",
+      "return_stops": 0,
+      "price_usd": 316.79,
+      "offer_id": "99569722-5e67-49f8-99b5-b4681a2212e8",
+      "detail": "UA2374, 8:15am"
+    },
+    "hotel": {
+      "id": "h1",
+      "name": "Econo Lodge Phoenix Airport",
+      "property_id": "100117306",
+      "rate_usd": 60.83,
+      "check_in": "2026-10-19",
+      "check_out": "2026-10-23",
+      "nights": 4,
+      "amenities": [
+        "Free airport shuttle",
+        "Free parking",
+        "Outdoor pool",
+        "Free Wi-Fi",
+        "Restaurant",
+        "Hot breakfast"
+      ],
+      "rating": null,
+      "area": "PHX",
+      "detail": "Econo Lodge Phoenix Airport, 4 nights (2026-10-19 \u2192 2026-10-23, modified)"
+    },
+    "flight_cancelled": false,
+    "hotel_conflict": false,
+    "disruption": {
+      "cancelled_leg": "flight",
+      "conflict_legs": [
+        "hotel"
+      ]
+    },
+    "recovery_flight_detail": "UA2374, 8:15am",
+    "proposed_hotel": {
+      "check_in": "2026-10-19",
+      "check_out": "2026-10-23",
+      "nights": 4
+    },
+    "hotel_contact_mode": "stay_on_line",
+    "nights": 4
+  },
+  "f1c9bb85-1423-4fad-bd4e-40734562359a": {
+    "session_id": "f1c9bb85-1423-4fad-bd4e-40734562359a",
+    "pnr": "OVGIKM",
+    "total_usd": 2702.4,
+    "flight": {
+      "id": "f1",
+      "carrier": "DL",
+      "airline_name": "Delta Airlines",
+      "flight_number": "DL2725 + DL420",
+      "origin": "SFO",
+      "destination": "DFW",
+      "depart": "2026-07-25T14:30:00",
+      "arrive": "2026-07-25T22:12:00",
+      "duration": "7h 42m",
+      "stops": 1,
+      "return_flight_number": "DL2812 + DL1091",
+      "return_origin": "DFW",
+      "return_destination": "SFO",
+      "return_depart": "2026-07-27T18:12:00",
+      "return_arrive": "2026-07-27T23:52:00",
+      "return_duration": "5h 40m",
+      "return_stops": 1,
+      "price_usd": 542.4,
+      "offer_id": "c99f4479-9f54-4327-8bc6-f46265520e36",
+      "detail": "Delta DL2725 + DL420, 2:30pm outbound, 1 stop, $542.40"
+    },
+    "flight_cancelled": true,
+    "hotel_conflict": true,
+    "disruption": {
+      "cancelled_leg": "flight",
+      "conflict_legs": [
+        "hotel"
+      ]
+    }
+  },
+  "6f3b867d-bec2-4785-834d-29239314856e": {
+    "session_id": "6f3b867d-bec2-4785-834d-29239314856e",
+    "pnr": "RSQMQG",
+    "total_usd": 2098.18,
+    "flight": {
+      "id": "f1",
+      "carrier": "DL",
+      "airline_name": "Delta",
+      "flight_number": "DL3903",
+      "origin": "OAK",
+      "destination": "AUS",
+      "depart": "2026-07-20T17:05:00",
+      "arrive": "2026-07-21T10:59:00",
+      "duration": "17h54m",
+      "stops": 2,
+      "price_usd": 314.5,
+      "offer_id": "2cff9e17-6577-485a-bc4b-ae08effbba79",
+      "detail": "Delta DL3903, departs 5:05pm, 2 stops, $314.50"
+    },
+    "hotel": {
+      "id": "h2",
+      "name": "Renaissance Austin Hotel",
+      "property_id": "100136302",
+      "rate_usd": 370.84,
+      "check_in": "2026-07-20",
+      "check_out": "2026-07-22",
+      "nights": 2,
+      "amenities": [],
+      "rating": null,
+      "area": "AUS",
+      "detail": "Renaissance Austin Hotel, $370.84/night, 2 nights"
+    },
+    "flight_cancelled": true,
+    "hotel_conflict": true,
+    "disruption": {
+      "cancelled_leg": "flight",
+      "conflict_legs": [
+        "hotel"
+      ]
+    }
   }
 }

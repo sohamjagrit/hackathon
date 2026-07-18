@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Miles — Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300..800&family=DM+Sans:ital,wght@0,300..700;1,300..700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-ink: #232323;
+    --color-blue: #2743F4;
+    --color-rust: #DD4110;
+    --color-cream: #FFF7E4;
+    --color-gray: #D9D9D9;
+    --color-white: #FFFFFF;
+
+    --color-success: #2F6B4F;
+    --color-warning: #C8862E;
+    --color-error: #B23A2E;
+    --color-info: #2743F4;
+
+    --bg-canvas: var(--color-cream);
+    --bg-surface: var(--color-white);
+    --text-primary: var(--color-ink);
+    --text-secondary: rgba(35,35,35,0.62);
+    --text-muted: rgba(35,35,35,0.42);
+    --border-hairline: rgba(35,35,35,0.08);
+    --border-strong: rgba(35,35,35,0.16);
+
+    --radius-sm: 8px;
+    --radius-md: 16px;
+    --radius-lg: 24px;
+    --radius-full: 999px;
+
+    --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
+    --space-6: 24px; --space-8: 32px; --space-12: 48px; --space-16: 64px;
+
+    --font-display: 'Bricolage Grotesque', serif;
+    --font-body: 'DM Sans', sans-serif;
+  }
+
+  [data-theme="dark"] {
+    --bg-canvas: #161512;
+    --bg-surface: #211F1B;
+    --text-primary: var(--color-cream);
+    --text-secondary: rgba(255,247,228,0.64);
+    --text-muted: rgba(255,247,228,0.42);
+    --border-hairline: #38352E;
+    --border-strong: rgba(255,247,228,0.18);
+    --color-blue: #5C74FF;
+    --color-rust: #FF6B3D;
+  }
+
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg-canvas);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    transition: background 0.3s ease, color 0.3s ease;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: var(--space-8) var(--space-6) var(--space-16);
+  }
+
+  /* ---------- theme toggle ---------- */
+  .theme-toggle {
+    position: fixed;
+    top: 24px; right: 24px;
+    width: 44px; height: 44px;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--border-hairline);
+    background: var(--bg-surface);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(35,35,35,0.10);
+    z-index: 20;
+  }
+  .theme-toggle svg { width: 18px; height: 18px; stroke: var(--text-primary); }
+
+  /* ---------- header / greeting ---------- */
+  .header-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-6);
+    margin-bottom: var(--space-6);
+    flex-wrap: wrap;
+  }
+  .greeting-eyebrow {
+    font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--text-muted); margin: 0 0 8px;
+  }
+  .greeting-h1 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(32px, 4vw, 48px);
+    line-height: 1.08;
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+
+  /* compact weather widget — secondary, top-right */
+  .weather-mini {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    background: var(--bg-surface);
+    border: 1px solid var(--border-hairline);
+    border-radius: var(--radius-full);
+    padding: 8px 16px 8px 8px;
+    flex-shrink: 0;
+  }
+  .weather-mini-icon {
+    width: 28px; height: 28px;
+    border-radius: var(--radius-full);
+    background: rgba(39,67,244,0.08);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .weather-mini-icon svg { width: 14px; height: 14px; stroke: var(--color-blue); }
+  .weather-mini-text { font-size: 13px; color: var(--text-secondary); white-space: nowrap; }
+  .weather-mini-text strong { color: var(--text-primary); font-weight: 600; }
+
+  /* hero CTA — the one true primary action on the page */
+  .cta-hero {
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 18px;
+    color: var(--color-cream);
+    background: var(--color-blue);
+    border: none;
+    border-radius: var(--radius-lg);
+    padding: 22px 40px;
+    display: flex; align-items: center; justify-content: center; gap: 12px;
+    cursor: pointer;
+    box-shadow: 0 12px 32px rgba(39,67,244,0.32);
+    transition: transform 0.15s ease;
+    margin-bottom: var(--space-12);
+    width: 100%;
+  }
+  .cta-hero:hover { transform: translateY(-2px); }
+  .cta-hero svg { width: 22px; height: 22px; stroke: var(--color-cream); }
+
+  /* per-card modify action — small icon button, top-right of the photo */
+  .trip-edit-btn {
+    position: absolute;
+    top: 12px; right: 12px;
+    width: 34px; height: 34px;
+    border-radius: var(--radius-full);
+    background: rgba(255,247,228,0.92);
+    border: none;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    z-index: 2;
+    transition: background 0.15s ease;
+  }
+  .trip-edit-btn:hover { background: var(--color-white); }
+  .trip-edit-btn svg { width: 15px; height: 15px; stroke: var(--color-ink); }
+
+  /* ---------- section headers ---------- */
+  .section-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 22px;
+    margin: 0 0 var(--space-4);
+  }
+  .section {
+    margin-bottom: var(--space-12);
+  }
+
+  /* ---------- trip card grid ---------- */
+  .trip-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--space-6);
+  }
+
+  .trip-card {
+    position: relative;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-hairline);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .trip-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 28px rgba(35,35,35,0.12);
+  }
+
+  .trip-photo {
+    height: 160px;
+    width: 100%;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+  }
+  .trip-status-pill {
+    position: absolute;
+    top: 12px; left: 12px;
+    background: rgba(255,247,228,0.92);
+    color: var(--color-ink);
+    font-size: 12px; font-weight: 600;
+    padding: 6px 12px;
+    border-radius: var(--radius-full);
+  }
+
+  /* perforation divider between photo and stub */
+  .trip-perf {
+    height: 14px;
+    width: 100%;
+    background:
+      radial-gradient(circle at 10px 0, transparent 6px, var(--bg-surface) 6.5px) 0 -7px / 20px 14px repeat-x,
+      var(--color-cream);
+    position: relative;
+  }
+  [data-theme="dark"] .trip-perf {
+    background:
+      radial-gradient(circle at 10px 0, transparent 6px, var(--bg-surface) 6.5px) 0 -7px / 20px 14px repeat-x,
+      var(--bg-canvas);
+  }
+
+  .trip-stub {
+    padding: var(--space-4) var(--space-6) var(--space-6);
+  }
+  .trip-dest {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 19px;
+    margin: 0 0 4px;
+  }
+  .trip-dates {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin: 0 0 10px;
+  }
+  .trip-meta-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .trip-label-upcoming {
+    font-size: 13px; font-weight: 600;
+    color: var(--color-blue);
+  }
+  .trip-label-past {
+    font-size: 13px; font-weight: 600;
+    color: var(--text-muted);
+  }
+  .trip-confirmation {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-family: var(--font-body);
+    letter-spacing: 0.02em;
+  }
+
+  /* past trip: reduced saturation + postmark stamp */
+  .trip-card.past .trip-photo { filter: saturate(0.55) brightness(0.92); }
+  .trip-card.past { opacity: 0.86; }
+
+  .postmark {
+    position: absolute;
+    top: 18px; right: 18px;
+    width: 76px; height: 76px;
+    border: 2.5px solid var(--color-ink);
+    border-radius: var(--radius-full);
+    display: flex; align-items: center; justify-content: center;
+    transform: rotate(-18deg);
+    opacity: 0.55;
+    mix-blend-mode: multiply;
+  }
+  [data-theme="dark"] .postmark { mix-blend-mode: normal; opacity: 0.45; }
+  .postmark-inner {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    text-align: center;
+    line-height: 1.3;
+    color: var(--color-ink);
+  }
+
+  /* ---------- empty state ---------- */
+  .empty-state {
+    font-size: 15px;
+    color: var(--text-muted);
+    padding: var(--space-6) 0;
+  }
+
+  @media (max-width: 767px) {
+    .page { padding: var(--space-6) var(--space-4) var(--space-12); }
+    .trip-grid {
+      display: flex;
+      overflow-x: auto;
+      gap: var(--space-4);
+      scroll-snap-type: x mandatory;
+      padding-bottom: 8px;
+    }
+    .trip-card { min-width: 260px; scroll-snap-align: start; }
+    .header-top { flex-direction: column; align-items: flex-start; gap: var(--space-3); }
+    .cta-row { flex-direction: column; align-items: stretch; width: 100%; }
+    .cta-hero, .cta-secondary { width: 100%; justify-content: center; }
+  }
+</style>
+</head>
+<body>
+
+<button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">
+  <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="4.5"></circle>
+    <path d="M12 2.5v2.5M12 19v2.5M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2.5 12H5M19 12h2.5M4.2 19.8L6 18M18 6l1.8-1.8"></path>
+  </svg>
+</button>
+
+<div class="page">
+
+  <!-- Greeting + compact weather -->
+  <div class="header-top">
+    <div>
+      <p class="greeting-eyebrow">Miles</p>
+      <h1 class="greeting-h1">Good afternoon, Emily.</h1>
+    </div>
+    <div class="weather-mini">
+      <div class="weather-mini-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="4.5"></circle>
+          <path d="M12 2.5v2.5M12 19v2.5M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2.5 12H5M19 12h2.5M4.2 19.8L6 18M18 6l1.8-1.8"></path>
+        </svg>
+      </div>
+      <span class="weather-mini-text"><strong>68°</strong> · San Francisco</span>
+    </div>
+  </div>
+
+  <!-- Primary CTA — the one prominent action on this page -->
+  <button class="cta-hero" onclick="alert('This would launch the two-panel voice conversation view.')">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 15a3.5 3.5 0 0 0 3.5-3.5v-5a3.5 3.5 0 0 0-7 0v5A3.5 3.5 0 0 0 12 15Z"></path>
+      <path d="M6 11.5a6 6 0 0 0 12 0M12 17.5V21"></path>
+    </svg>
+    Plan a new trip
+  </button>
+
+  <!-- Upcoming trips -->
+  <div class="section">
+    <h2 class="section-title">Upcoming trips</h2>
+    <div class="trip-grid">
+
+      <div class="trip-card" onclick="window.location.href='Miles_Trip_Detail.html'">
+        <div class="trip-photo" style="background-image:url('https://d8j0ntlcm91z4.cloudfront.net/user_3GFMoiC4bqHH8GpOL1rh6WWLlWf/hf_20260717_185040_589b5e9a-4764-49ea-90d2-805a3c043efc.png')">
+          <span class="trip-status-pill">In 12 days</span>
+          <button class="trip-edit-btn" onclick="event.stopPropagation(); alert('This would launch a voice conversation to modify the Austin trip.')" aria-label="Modify this trip">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 20h4.5L19 9.5a2.1 2.1 0 0 0-3-3L5.5 17v3Z"></path>
+              <path d="M14.5 8 16 6.5"></path>
+            </svg>
+          </button>
+        </div>
+        <div class="trip-perf"></div>
+        <div class="trip-stub">
+          <p class="trip-dest">Austin, TX</p>
+          <p class="trip-dates">Nov 12 – Nov 19, 2026</p>
+          <div class="trip-meta-row">
+            <span class="trip-label-upcoming">Confirmed</span>
+            <span class="trip-confirmation">SCT-4471CB</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Past trips -->
+  <div class="section">
+    <h2 class="section-title">Past trips</h2>
+    <div class="trip-grid">
+
+      <div class="trip-card past" onclick="alert('Opens this trip\'s itinerary.')">
+        <div class="trip-photo" style="background-image:url('https://d8j0ntlcm91z4.cloudfront.net/user_3GFMoiC4bqHH8GpOL1rh6WWLlWf/hf_20260717_185209_160a7ebf-726e-4c66-9b72-d3850da0fef2.png')">
+          <div class="postmark">
+            <span class="postmark-inner">Traveled<br>Aug 2026</span>
+          </div>
+        </div>
+        <div class="trip-perf"></div>
+        <div class="trip-stub">
+          <p class="trip-dest">Chicago, IL</p>
+          <p class="trip-dates">Aug 3 – Aug 8, 2026</p>
+          <div class="trip-meta-row">
+            <span class="trip-label-past">Completed</span>
+            <span class="trip-confirmation">SCT-2280KW</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="trip-card past" onclick="alert('Opens this trip\'s itinerary.')">
+        <div class="trip-photo" style="background-image:url('https://d8j0ntlcm91z4.cloudfront.net/user_3GFMoiC4bqHH8GpOL1rh6WWLlWf/hf_20260717_185213_bdae7582-e1c6-4cbe-80d2-672da8726aa0.png')">
+          <div class="postmark">
+            <span class="postmark-inner">Traveled<br>May 2026</span>
+          </div>
+        </div>
+        <div class="trip-perf"></div>
+        <div class="trip-stub">
+          <p class="trip-dest">Seattle, WA</p>
+          <p class="trip-dates">May 14 – May 18, 2026</p>
+          <div class="trip-meta-row">
+            <span class="trip-label-past">Completed</span>
+            <span class="trip-confirmation">SCT-6642DA</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+  function toggleTheme() {
+    const html = document.documentElement;
+    const isDark = html.getAttribute('data-theme') === 'dark';
+    html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  }
+</script>
+
+</body>
+</html>

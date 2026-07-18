@@ -1,5 +1,21 @@
 [
   {
+    "name": "traveler_profile",
+    "description": "Signed-in traveler's profile sent by the app at call start. Payload: first_name, last_name, email. Use it to greet by name and to book without asking for name or email.",
+    "direction": "app_to_agent",
+    "behavior": "notify"
+  },
+  {
+    "name": "addons_selected",
+    "description": "Traveler chose booking add-ons (extra bag, meal, pet). Payload: addons array of {name, code, price_usd, detail}. Fire before booking so the dashboard lists them.",
+    "direction": "agent_to_app"
+  },
+  {
+    "name": "show_trip_summary",
+    "description": "Show the trip summary card once origin, destination, and dates are known, before any search. Payload: origin, destination, depart_date, return_date (omit if one-way), trip_type, travelers.",
+    "direction": "agent_to_app"
+  },
+  {
     "name": "leg_loading",
     "description": "A leg search has started. Trigger before calling Sabre search tools.",
     "direction": "agent_to_app"
@@ -25,8 +41,28 @@
     "direction": "agent_to_app"
   },
   {
+    "name": "booking_started",
+    "description": "The approved Sabre booking commit has started. Trigger immediately before submit_background_query so the dashboard can show the 45–90 second commit state.",
+    "direction": "agent_to_app"
+  },
+  {
+    "name": "show_destination_guide",
+    "description": "Show live destination concierge content while the PNR commits. Payload includes destination plus a 3-day forecast array and/or exactly three activity objects.",
+    "direction": "agent_to_app"
+  },
+  {
     "name": "booking_confirmed",
     "description": "Booking committed to Sabre. Payload must include pnr and total_usd.",
+    "direction": "agent_to_app"
+  },
+  {
+    "name": "show_seats",
+    "description": "Show the illustrative seat map after the traveler states a seating preference. Payload must include preference (window or aisle).",
+    "direction": "agent_to_app"
+  },
+  {
+    "name": "seat_selected",
+    "description": "A specific seat has been assigned. Payload must include seat (e.g. '14A') and type (window, aisle, or middle).",
     "direction": "agent_to_app"
   }
 ]

@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Miles — Trip Detail</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300..800&family=DM+Sans:ital,wght@0,300..700;1,300..700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-ink: #232323;
+    --color-blue: #2743F4;
+    --color-rust: #DD4110;
+    --color-cream: #FFF7E4;
+    --color-gray: #D9D9D9;
+    --color-white: #FFFFFF;
+
+    --color-success: #2F6B4F;
+    --color-warning: #C8862E;
+    --color-error: #B23A2E;
+    --color-info: #2743F4;
+
+    --bg-canvas: var(--color-cream);
+    --bg-surface: var(--color-white);
+    --text-primary: var(--color-ink);
+    --text-secondary: rgba(35,35,35,0.62);
+    --text-muted: rgba(35,35,35,0.42);
+    --border-hairline: rgba(35,35,35,0.08);
+    --border-strong: rgba(35,35,35,0.16);
+
+    --warning-bg: rgba(200,134,46,0.12);
+    --warning-border: rgba(200,134,46,0.4);
+
+    --radius-sm: 8px;
+    --radius-md: 16px;
+    --radius-lg: 24px;
+    --radius-full: 999px;
+
+    --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
+    --space-6: 24px; --space-8: 32px; --space-12: 48px; --space-16: 64px;
+
+    --font-display: 'Bricolage Grotesque', serif;
+    --font-body: 'DM Sans', sans-serif;
+  }
+
+  [data-theme="dark"] {
+    --bg-canvas: #161512;
+    --bg-surface: #211F1B;
+    --text-primary: var(--color-cream);
+    --text-secondary: rgba(255,247,228,0.64);
+    --text-muted: rgba(255,247,228,0.42);
+    --border-hairline: #38352E;
+    --border-strong: rgba(255,247,228,0.18);
+    --color-blue: #5C74FF;
+    --color-rust: #FF6B3D;
+    --warning-bg: rgba(200,134,46,0.16);
+    --warning-border: rgba(200,134,46,0.45);
+  }
+
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg-canvas);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    transition: background 0.3s ease, color 0.3s ease;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page { max-width: 1040px; margin: 0 auto; padding: 0 var(--space-6) var(--space-16); }
+
+  .theme-toggle {
+    position: fixed; top: 24px; right: 24px;
+    width: 44px; height: 44px; border-radius: var(--radius-full);
+    border: 1px solid var(--border-hairline); background: var(--bg-surface);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; box-shadow: 0 8px 24px rgba(35,35,35,0.10); z-index: 30;
+  }
+  .theme-toggle svg { width: 18px; height: 18px; stroke: var(--text-primary); }
+
+  /* ---------- hero banner ---------- */
+  .hero-banner {
+    position: relative;
+    width: 100%; height: 360px;
+    background-size: cover; background-position: center;
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    overflow: hidden;
+    margin-bottom: var(--space-8);
+  }
+  .hero-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(22,21,18,0.05) 0%, rgba(22,21,18,0.82) 100%);
+  }
+  .hero-back-btn {
+    position: absolute; top: 20px; left: 20px;
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(255,247,228,0.92);
+    color: var(--color-ink);
+    font-family: var(--font-body); font-weight: 600; font-size: 14px;
+    border: none; border-radius: var(--radius-full);
+    padding: 10px 18px 10px 14px;
+    cursor: pointer; text-decoration: none;
+  }
+  .hero-back-btn svg { width: 16px; height: 16px; stroke: var(--color-ink); }
+  .hero-content { position: absolute; left: var(--space-6); right: var(--space-6); bottom: var(--space-6); }
+  .hero-weather {
+    position: absolute; top: 20px; right: 20px;
+    display: flex; align-items: center; gap: 10px;
+    background: rgba(255,247,228,0.14);
+    border: 1px solid rgba(255,247,228,0.32);
+    backdrop-filter: blur(6px);
+    border-radius: var(--radius-full);
+    padding: 10px 18px 10px 12px;
+    color: var(--color-cream);
+  }
+  .hero-weather-icon { width: 30px; height: 30px; border-radius: var(--radius-full); background: rgba(255,247,228,0.16); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .hero-weather-icon svg { width: 15px; height: 15px; stroke: var(--color-cream); }
+  .hero-weather-text { font-size: 13px; }
+  .hero-weather-text strong { font-weight: 700; font-size: 15px; }
+  .hero-eyebrow { font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: rgba(255,247,228,0.75); margin: 0 0 6px; }
+  .hero-title { font-family: var(--font-display); font-weight: 700; font-size: clamp(30px, 4.2vw, 46px); color: var(--color-cream); margin: 0; line-height: 1.05; }
+  .hero-countdown-pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    margin-top: var(--space-3);
+    background: rgba(255,247,228,0.14);
+    border: 1px solid rgba(255,247,228,0.32);
+    color: var(--color-cream);
+    padding: 8px 16px; border-radius: var(--radius-full);
+    font-size: 13px; font-weight: 600;
+    backdrop-filter: blur(6px);
+  }
+
+  /* ---------- stat row ---------- */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
+  }
+  .stat-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-hairline);
+    border-radius: var(--radius-md);
+    padding: var(--space-6);
+  }
+  .stat-label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin: 0 0 10px; }
+  .stat-value { font-family: var(--font-display); font-weight: 700; font-size: 26px; margin: 0; }
+  .stat-sub { font-size: 13px; color: var(--text-secondary); margin: 4px 0 0; }
+
+  /* ---------- weather alert ---------- */
+  .weather-alert {
+    display: flex; gap: 12px; align-items: flex-start;
+    background: var(--warning-bg);
+    border: 1px solid var(--warning-border);
+    border-radius: var(--radius-md);
+    padding: 16px 20px;
+    margin-bottom: var(--space-8);
+  }
+  .weather-alert svg { width: 20px; height: 20px; stroke: var(--color-warning); flex-shrink: 0; margin-top: 1px; }
+  .weather-alert p { margin: 0; font-size: 14px; color: var(--text-primary); }
+  .weather-alert strong { font-weight: 600; }
+
+  /* ---------- section ---------- */
+  .section { margin-bottom: var(--space-8); }
+  .section-title { font-family: var(--font-display); font-weight: 700; font-size: 20px; margin: 0 0 var(--space-4); }
+
+  /* ---------- boarding-pass style itinerary cards ---------- */
+  .boarding-card {
+    position: relative;
+    display: flex;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-hairline);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--space-4);
+  }
+  .bp-main { flex: 1; min-width: 0; padding: var(--space-6); }
+  .bp-type { display: flex; align-items: center; gap: 10px; margin-bottom: var(--space-4); }
+  .bp-type-icon { width: 36px; height: 36px; border-radius: var(--radius-full); background: rgba(39,67,244,0.08); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .bp-type-icon svg { width: 17px; height: 17px; stroke: var(--color-blue); }
+  .bp-type-label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin: 0; }
+  .bp-route { font-family: var(--font-display); font-weight: 700; font-size: clamp(20px, 2.6vw, 28px); margin: 0 0 var(--space-4); display: flex; align-items: center; gap: 12px; }
+  .bp-route svg { width: 18px; height: 18px; stroke: var(--text-muted); flex-shrink: 0; }
+  .bp-fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: var(--space-4); }
+  .bp-field-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin: 0 0 3px; }
+  .bp-field-value { font-size: 14px; font-weight: 600; margin: 0; }
+  .bp-directions {
+    display: inline-flex; align-items: center; gap: 6px;
+    margin-top: var(--space-4);
+    font-size: 13px; font-weight: 600; color: var(--color-blue);
+    text-decoration: none;
+  }
+  .bp-directions svg { width: 14px; height: 14px; stroke: var(--color-blue); }
+
+  .bp-divider-col { position: relative; width: 0; border-left: 2px dashed var(--border-strong); flex-shrink: 0; }
+  .bp-notch { position: absolute; left: 50%; transform: translateX(-50%); width: 22px; height: 22px; border-radius: 50%; background: var(--bg-canvas); z-index: 2; }
+  .bp-notch.top { top: -11px; }
+  .bp-notch.bottom { bottom: -11px; }
+
+  .bp-stub {
+    width: 128px; flex-shrink: 0;
+    padding: var(--space-6) var(--space-4);
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+    text-align: center;
+  }
+  .bp-barcode { width: 100%; height: 34px; background: repeating-linear-gradient(90deg, var(--text-primary) 0 2px, transparent 2px 5px); opacity: 0.7; }
+  .bp-stub-price { font-family: var(--font-display); font-weight: 700; font-size: 18px; margin: 0; }
+  .bp-stub-code { font-size: 10.5px; color: var(--text-muted); letter-spacing: 0.02em; margin: 0; word-break: break-all; }
+
+  @media (max-width: 600px) {
+    .boarding-card { flex-direction: column; }
+    .bp-divider-col { width: auto; height: 0; border-left: none; border-top: 2px dashed var(--border-strong); }
+    .bp-notch.top { top: 50%; left: -11px; transform: translateY(-50%); }
+    .bp-notch.bottom { bottom: auto; top: 50%; left: auto; right: -11px; transform: translateY(-50%); }
+    .bp-stub { width: 100%; flex-direction: row; justify-content: space-between; padding: var(--space-4) var(--space-6); }
+    .bp-barcode { width: 90px; }
+  }
+
+  /* ---------- travelers ---------- */
+  .travelers-row { display: flex; flex-wrap: wrap; gap: 10px; }
+  .traveler-chip { display: flex; align-items: center; gap: 10px; background: var(--bg-surface); border: 1px solid var(--border-hairline); border-radius: var(--radius-full); padding: 8px 18px 8px 8px; }
+  .traveler-avatar { width: 32px; height: 32px; border-radius: var(--radius-full); background: rgba(39,67,244,0.12); color: var(--color-blue); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; flex-shrink: 0; }
+  .traveler-name { font-size: 14px; font-weight: 600; }
+
+  /* ---------- cost summary ---------- */
+  .cost-card { background: var(--bg-surface); border: 1px solid var(--border-hairline); border-radius: var(--radius-lg); padding: var(--space-6); }
+  .cost-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; font-size: 14px; color: var(--text-secondary); }
+  .cost-row.total { border-top: 1px solid var(--border-hairline); margin-top: 8px; padding-top: 16px; font-size: 17px; font-weight: 700; color: var(--text-primary); }
+
+  /* ---------- payment receipt ---------- */
+  .payment-card { background: var(--bg-surface); border: 1px solid var(--border-hairline); border-radius: var(--radius-lg); padding: var(--space-6); display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); flex-wrap: wrap; }
+  .payment-left { display: flex; align-items: center; gap: 14px; }
+  .payment-icon { width: 44px; height: 44px; border-radius: var(--radius-full); background: rgba(47,107,79,0.12); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .payment-icon svg { width: 20px; height: 20px; stroke: var(--color-success); }
+  .payment-status { font-weight: 700; font-size: 15px; margin: 0; color: var(--color-success); }
+  .payment-sub { font-size: 13px; color: var(--text-secondary); margin: 3px 0 0; }
+  .payment-receipt-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: transparent; border: 1.5px solid var(--border-strong);
+    border-radius: var(--radius-full); padding: 12px 20px;
+    font-family: var(--font-body); font-weight: 600; font-size: 14px;
+    color: var(--text-primary); cursor: pointer;
+  }
+  .payment-receipt-btn svg { width: 15px; height: 15px; stroke: var(--text-primary); }
+
+  /* ---------- add-ons ---------- */
+  .addon-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--space-4); }
+  .addon-card {
+    background: var(--bg-surface); border: 1.5px solid var(--border-hairline);
+    border-radius: var(--radius-md); padding: var(--space-6);
+    cursor: pointer; transition: border-color 0.15s ease, background 0.15s ease;
+    position: relative;
+  }
+  .addon-card:hover { border-color: var(--border-strong); }
+  .addon-card.selected { border-color: var(--color-blue); background: rgba(39,67,244,0.05); }
+  .addon-icon { width: 36px; height: 36px; border-radius: var(--radius-full); background: rgba(39,67,244,0.08); display: flex; align-items: center; justify-content: center; margin-bottom: var(--space-3); }
+  .addon-icon svg { width: 17px; height: 17px; stroke: var(--color-blue); }
+  .addon-name { font-weight: 600; font-size: 15px; margin: 0 0 2px; }
+  .addon-price { font-size: 13px; color: var(--text-secondary); margin: 0; }
+  .addon-check {
+    position: absolute; top: 16px; right: 16px;
+    width: 22px; height: 22px; border-radius: var(--radius-full);
+    border: 1.5px solid var(--border-strong);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .addon-card.selected .addon-check { background: var(--color-blue); border-color: var(--color-blue); }
+  .addon-check svg { width: 12px; height: 12px; stroke: var(--color-cream); opacity: 0; }
+  .addon-card.selected .addon-check svg { opacity: 1; }
+
+  /* ---------- modify / voice section ---------- */
+  .modify-card {
+    background: var(--bg-surface); border: 1px solid var(--border-hairline);
+    border-radius: var(--radius-lg); padding: var(--space-8);
+    display: flex; flex-direction: column; align-items: center; text-align: center; gap: var(--space-3);
+  }
+  .modify-mic {
+    width: 60px; height: 60px; border-radius: var(--radius-full);
+    background: var(--color-blue); border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 12px 32px rgba(39,67,244,0.30);
+    position: relative;
+  }
+  .modify-mic svg { width: 24px; height: 24px; stroke: var(--color-cream); }
+  .modify-mic-ring {
+    position: absolute; inset: -8px; border-radius: var(--radius-full);
+    border: 2px solid var(--color-blue); opacity: 0;
+  }
+  .modify-mic.listening .modify-mic-ring { animation: pulse-ring 1.4s ease-out infinite; }
+  @keyframes pulse-ring {
+    0% { opacity: 0.6; transform: scale(0.9); }
+    100% { opacity: 0; transform: scale(1.5); }
+  }
+  .modify-title { font-family: var(--font-display); font-weight: 700; font-size: 19px; margin: var(--space-2) 0 0; }
+  .modify-body { font-size: 14px; color: var(--text-secondary); margin: 0; max-width: 340px; }
+  .modify-transcript { font-size: 13px; color: var(--color-blue); font-weight: 600; height: 18px; margin-top: 4px; }
+
+  /* ---------- back to home button ---------- */
+  .cta-secondary-block {
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    width: 100%;
+    font-family: var(--font-body); font-weight: 600; font-size: 16px;
+    color: var(--text-primary); background: transparent;
+    border: 1.5px solid var(--border-strong); border-radius: var(--radius-lg);
+    padding: 18px; cursor: pointer; text-decoration: none;
+  }
+  .cta-secondary-block:hover { background: var(--bg-surface); }
+  .cta-secondary-block svg { width: 18px; height: 18px; stroke: var(--text-primary); }
+
+  @media (max-width: 767px) {
+    .page { padding: 0 var(--space-4) var(--space-12); }
+    .hero-banner { height: 320px; }
+    .hero-weather { top: 64px; right: 16px; }
+    .stats-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">
+  <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="4.5"></circle>
+    <path d="M12 2.5v2.5M12 19v2.5M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2.5 12H5M19 12h2.5M4.2 19.8L6 18M18 6l1.8-1.8"></path>
+  </svg>
+</button>
+
+<!-- Hero banner: same destination image as the trip card -->
+<div class="hero-banner" style="background-image:url('https://d8j0ntlcm91z4.cloudfront.net/user_3GFMoiC4bqHH8GpOL1rh6WWLlWf/hf_20260717_185040_589b5e9a-4764-49ea-90d2-805a3c043efc.png')">
+  <div class="hero-overlay"></div>
+  <a class="hero-back-btn" href="Miles_Dashboard_Prototype.html">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
+    Home
+  </a>
+  <div class="hero-weather">
+    <div class="hero-weather-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"></circle><path d="M12 2.5v2.5M12 19v2.5M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2.5 12H5M19 12h2.5M4.2 19.8L6 18M18 6l1.8-1.8"></path></svg>
+    </div>
+    <span class="hero-weather-text"><strong>72°F</strong> · Partly sunny</span>
+  </div>
+  <div class="hero-content">
+    <p class="hero-eyebrow">Your next trip to</p>
+    <h1 class="hero-title">Austin, TX</h1>
+    <span class="hero-countdown-pill">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 3"></path></svg>
+      Departs Nov 12, 2026
+    </span>
+  </div>
+</div>
+
+<div class="page">
+
+  <!-- Quick stats -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <p class="stat-label">Your trip starts in</p>
+      <p class="stat-value">12 days</p>
+      <p class="stat-sub">Nov 12, 2026</p>
+    </div>
+    <div class="stat-card">
+      <p class="stat-label">Check-in window</p>
+      <p class="stat-value">Nov 11</p>
+      <p class="stat-sub">Opens 24 hrs before departure</p>
+    </div>
+  </div>
+
+  <!-- Weather alert -->
+  <div class="weather-alert">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 2.5 18a1.7 1.7 0 0 0 1.5 2.5h16a1.7 1.7 0 0 0 1.5-2.5L13.7 3.9a1.7 1.7 0 0 0-3.4 0Z"></path><path d="M12 9.5v4M12 17h.01"></path></svg>
+    <p><strong>Light rain expected Nov 15.</strong> Pack accordingly during your stay.</p>
+  </div>
+
+  <!-- Itinerary -->
+  <div class="section">
+    <h2 class="section-title">Itinerary</h2>
+
+    <div class="boarding-card">
+      <div class="bp-main">
+        <div class="bp-type">
+          <div class="bp-type-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 12.5 21 6l-6.5 18.5-2.5-8-8-2.5Z" transform="translate(0 -3)"></path></svg></div>
+          <p class="bp-type-label">Alaska Airlines · AS 1450</p>
+        </div>
+        <p class="bp-route">SFO <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg> AUS</p>
+        <div class="bp-fields">
+          <div><p class="bp-field-label">Date</p><p class="bp-field-value">Nov 12, 2026</p></div>
+          <div><p class="bp-field-label">Departs</p><p class="bp-field-value">12:20 PM</p></div>
+          <div><p class="bp-field-label">Arrives</p><p class="bp-field-value">6:05 PM</p></div>
+          <div><p class="bp-field-label">Seat</p><p class="bp-field-value">14A</p></div>
+        </div>
+      </div>
+      <div class="bp-divider-col"><span class="bp-notch top"></span><span class="bp-notch bottom"></span></div>
+      <div class="bp-stub">
+        <div class="bp-barcode"></div>
+        <p class="bp-stub-price">$680</p>
+        <p class="bp-stub-code">SCT-4471CB</p>
+      </div>
+    </div>
+
+    <div class="boarding-card">
+      <div class="bp-main">
+        <div class="bp-type">
+          <div class="bp-type-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V9l8-5 8 5v12"></path><path d="M9 21v-6h6v6"></path></svg></div>
+          <p class="bp-type-label">Hotel Van Zandt</p>
+        </div>
+        <p class="bp-route">7 nights</p>
+        <div class="bp-fields">
+          <div><p class="bp-field-label">Check-in</p><p class="bp-field-value">Nov 12</p></div>
+          <div><p class="bp-field-label">Check-out</p><p class="bp-field-value">Nov 19</p></div>
+          <div><p class="bp-field-label">Room</p><p class="bp-field-value">King Room</p></div>
+          <div><p class="bp-field-label">Rate</p><p class="bp-field-value">$265/night</p></div>
+          <div><p class="bp-field-label">From airport</p><p class="bp-field-value">8.2 mi · 14 min</p></div>
+        </div>
+        <a class="bp-directions" href="https://www.google.com/maps/dir/?api=1&destination=Hotel+Van+Zandt+Austin+TX" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.1 7-11.5A7 7 0 0 0 5 9.5C5 14.9 12 21 12 21Z"></path><circle cx="12" cy="9.5" r="2.2"></circle></svg>
+          Get directions
+        </a>
+      </div>
+      <div class="bp-divider-col"><span class="bp-notch top"></span><span class="bp-notch bottom"></span></div>
+      <div class="bp-stub">
+        <div class="bp-barcode"></div>
+        <p class="bp-stub-price">$1,855</p>
+        <p class="bp-stub-code">Rainey Street</p>
+      </div>
+    </div>
+
+    <div class="boarding-card">
+      <div class="bp-main">
+        <div class="bp-type">
+          <div class="bp-type-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17h14M5 17a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm14 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4ZM5 17V9l2-4h10l2 4v8"></path></svg></div>
+          <p class="bp-type-label">Compact SUV · Hertz</p>
+        </div>
+        <p class="bp-route">7 days</p>
+        <div class="bp-fields">
+          <div><p class="bp-field-label">Pick up</p><p class="bp-field-value">Nov 12</p></div>
+          <div><p class="bp-field-label">Drop off</p><p class="bp-field-value">Nov 19</p></div>
+          <div><p class="bp-field-label">Rate</p><p class="bp-field-value">$52/day</p></div>
+          <div><p class="bp-field-label">Location</p><p class="bp-field-value">AUS Airport</p></div>
+        </div>
+      </div>
+      <div class="bp-divider-col"><span class="bp-notch top"></span><span class="bp-notch bottom"></span></div>
+      <div class="bp-stub">
+        <div class="bp-barcode"></div>
+        <p class="bp-stub-price">$364</p>
+        <p class="bp-stub-code">HZ-88210</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Travelers -->
+  <div class="section">
+    <h2 class="section-title">Travelers</h2>
+    <div class="travelers-row">
+      <div class="traveler-chip"><span class="traveler-avatar">EC</span><span class="traveler-name">Emily Carter</span></div>
+      <div class="traveler-chip"><span class="traveler-avatar">JS</span><span class="traveler-name">Jake Sullivan</span></div>
+    </div>
+  </div>
+
+  <!-- Cost summary -->
+  <div class="section">
+    <h2 class="section-title">Total cost</h2>
+    <div class="cost-card">
+      <div class="cost-row"><span>Flight</span><span>$680</span></div>
+      <div class="cost-row"><span>Hotel · 7 nights</span><span>$1,855</span></div>
+      <div class="cost-row"><span>Car rental · 7 days</span><span>$364</span></div>
+      <div class="cost-row"><span>Taxes & fees</span><span>$184</span></div>
+      <div class="cost-row total"><span>Total</span><span>$3,083</span></div>
+    </div>
+  </div>
+
+  <!-- Payment confirmation -->
+  <div class="section">
+    <h2 class="section-title">Payment</h2>
+    <div class="payment-card">
+      <div class="payment-left">
+        <div class="payment-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"></circle><path d="M8.5 12.5 11 15l5-6"></path></svg>
+        </div>
+        <div>
+          <p class="payment-status">Paid in full · $3,083</p>
+          <p class="payment-sub">Visa •••• 2290 · Receipt #SCT-4471CB-R</p>
+        </div>
+      </div>
+      <button class="payment-receipt-btn" onclick="alert('This would download the PDF receipt.')">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0-4-4m4 4 4-4"></path><path d="M4 17v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"></path></svg>
+        Download receipt
+      </button>
+    </div>
+  </div>
+
+  <!-- Add-ons -->
+  <div class="section">
+    <h2 class="section-title">Add-ons</h2>
+    <div class="addon-grid">
+      <div class="addon-card" onclick="toggleAddon(this)">
+        <div class="addon-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="8" width="14" height="12" rx="2"></rect><path d="M9 8V6a3 3 0 0 1 6 0v2"></path></svg></div>
+        <p class="addon-name">Extra checked bag</p>
+        <p class="addon-price">+$35 per bag</p>
+        <span class="addon-check"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span>
+      </div>
+      <div class="addon-card" onclick="toggleAddon(this)">
+        <div class="addon-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="14" r="4"></circle><circle cx="6" cy="7" r="1.6"></circle><circle cx="12" cy="5" r="1.6"></circle><circle cx="18" cy="7" r="1.6"></circle></svg></div>
+        <p class="addon-name">Pet in cabin</p>
+        <p class="addon-price">+$125</p>
+        <span class="addon-check"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span>
+      </div>
+      <div class="addon-card" onclick="toggleAddon(this)">
+        <div class="addon-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="16" r="5"></circle><path d="M9 16V6h4M9 11h6l3 5"></path></svg></div>
+        <p class="addon-name">Wheelchair assistance</p>
+        <p class="addon-price">No additional cost</p>
+        <span class="addon-check"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modify trip (voice) -->
+  <div class="section">
+    <div class="modify-card">
+      <button class="modify-mic" id="modifyMic" onclick="toggleModifyVoice()" aria-label="Modify this trip by voice">
+        <span class="modify-mic-ring" id="modifyRing"></span>
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 15a3.5 3.5 0 0 0 3.5-3.5v-5a3.5 3.5 0 0 0-7 0v5A3.5 3.5 0 0 0 12 15Z"></path>
+          <path d="M6 11.5a6 6 0 0 0 12 0M12 17.5V21"></path>
+        </svg>
+      </button>
+      <p class="modify-title">Need to change something?</p>
+      <p class="modify-body">Tap the mic and tell Miles what to adjust — your flight, hotel, car rental, or add-ons.</p>
+      <p class="modify-transcript" id="modifyTranscript"></p>
+    </div>
+  </div>
+
+  <!-- Back to home -->
+  <a class="cta-secondary-block" href="Miles_Dashboard_Prototype.html">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.5 12 4l8 7.5"></path><path d="M6 10v10h12V10"></path></svg>
+    Back to home
+  </a>
+
+</div>
+
+<script>
+  function toggleTheme() {
+    const html = document.documentElement;
+    const isDark = html.getAttribute('data-theme') === 'dark';
+    html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  }
+
+  function toggleAddon(el) {
+    el.classList.toggle('selected');
+  }
+
+  let listening = false;
+  function toggleModifyVoice() {
+    const mic = document.getElementById('modifyMic');
+    const transcript = document.getElementById('modifyTranscript');
+    listening = !listening;
+    mic.classList.toggle('listening', listening);
+    if (listening) {
+      transcript.textContent = 'Listening…';
+    } else {
+      transcript.textContent = '';
+    }
+  }
+</script>
+
+</body>
+</html>

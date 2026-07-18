@@ -1,0 +1,14 @@
+[
+  {
+    "id": "1",
+    "name": "get_booking_context",
+    "description": "Pull the active booking and proposed hotel date change for this outbound hotel call. Call this FIRST before speaking to the front desk.",
+    "method": "GET",
+    "url": "https://REPLACE_WITH_PUBLIC_BASE_URL/context/hotel_call",
+    "auth": { "type": "none" },
+    "parameters": [],
+    "timeout": 15,
+    "max_retries": 2,
+    "enabled": true
+  }
+]
